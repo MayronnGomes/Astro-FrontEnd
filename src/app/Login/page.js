@@ -2,13 +2,17 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { Toast } from '../components/Toast';
 
 const Login = () => {
     const router = useRouter();
 
     const goToHome = (event) => {
         event.preventDefault();
-        router.push('/Home');
+
+        Toast('success', 'Login realizado com sucesso!')
+
+        // router.push('/Home');
       };
 
     return (
