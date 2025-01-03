@@ -45,9 +45,9 @@ const Login = () => {
             const data = await response.json();
 
             if (response.ok) {
-                const { token, id, name } = data;
+                const { token, id, nome } = data;
 				localStorage.setItem('token', token);
-                localStorage.setItem('user', JSON.stringify({id, name}));
+                localStorage.setItem('user', JSON.stringify({id, nome}));
                 Toast('success', 'Login realizado com sucesso!');
                 router.push('/Home');
             } else {

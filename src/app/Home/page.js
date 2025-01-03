@@ -1,85 +1,272 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SideBar from '../components/SideBar';
+import { Toast } from '../components/Toast';
+import TaskCard from '../components/TaskCard';
 
 const Home = () => {
-  return (
-    <div className="flex">
-        <SideBar />
-        <div className="flex-1">
-            <nav className="bg-gray-800 p-4 flex justify-between items-center">
-                <button className="md:hidden text-white" id="menu-button">
-                    <i className="fas fa-bars"></i>
+    const [user, setUser] = useState(null);
+    const [atividades, setAtividades] = useState([]);
+    const [isCreating, setIsCreating] = useState(false);
+    const [newActivity, setNewActivity] = useState({
+        nome: '',
+        descricao: '',
+        tempoDuracao: 0,
+        dataInicio: '',
+        dataFim: '',
+        local: '',
+        status: '',
+    });
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
+    async function getAtividades(userId) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/atividades/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Toast('success', 'Atividades carregadas com sucesso!');
+                setAtividades(data.atividades);
+            } else {
+                Toast('error', 'Erro ao carregar atividades');
+            }
+        } catch (error) {
+            console.error("Erro ao buscar atividades:", error);
+            Toast('error', 'Erro ao carregar atividades');
+        }
+    }
+
+    useEffect(() => {
+        if (user && user.id) {
+            getAtividades(user.id);
+        }
+    }, [user]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewActivity((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const activityWithUserId = {
+            ...newActivity,
+            userId: user.id,
+        };
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/atividades`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(activityWithUserId),
+            });
+
+            if (response.ok) {
+                Toast('success', 'Atividade criada com sucesso!');
+                setIsCreating(false);
+                setNewActivity({
+                    nome: '',
+                    descricao: '',
+                    tempoDuracao: 0,
+                    dataInicio: '',
+                    dataFim: '',
+                    local: '',
+                    status: '',
+                });
+                getAtividades(user.id);
+            } else {
+                Toast('error', 'Erro ao criar atividade');
+            }
+        } catch (error) {
+            console.error("Erro ao criar atividade:", error);
+            Toast('error', 'Erro ao criar atividade');
+        }
+    };
+
+    const handleCancel = () => {
+        setIsCreating(false);
+        setNewActivity({
+            nome: '',
+            descricao: '',
+            tempoDuracao: 0,
+            dataInicio: '',
+            dataFim: '',
+            local: '',
+            status: '',
+        }); 
+    };
+
+    return (
+        <div className="flex">
+            <SideBar />
+            <div className="flex-1 relative">
+                <nav className="bg-gray-800 p-4 flex justify-between items-center">
+                    <button className="md:hidden text-white" id="menu-button">
+                        <i className="fas fa-bars"></i>
+                    </button>
+                    <div className="text-xl font-bold">Dashboard</div>
+                    <div className="space-x-4 hidden md:block">
+                        <a className="hover:text-gray-400" href="#">Home</a>
+                        <a className="hover:text-gray-400" href="#">Tasks</a>
+                        <a className="hover:text-gray-400" href="#">Profile</a>
+                    </div>
+                </nav>
+                <nav className="bg-gray-700 p-4 flex justify-between items-center">
+                    <div className="space-x-4">
+                        <a className="hover:text-gray-400" href="#">Overview</a>
+                        <a className="hover:text-gray-400" href="#">Projects</a>
+                        <a className="hover:text-gray-400" href="#">Calendar</a>
+                        <a className="hover:text-gray-400" href="#">Reports</a>
+                    </div>
+                </nav>
+                <div className="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {atividades.length > 0 ? (
+                        atividades.map((atividade) => (
+                            <TaskCard key={atividade.id} task={atividade} />
+                        ))
+                    ) : (
+                        <div className="col-span-full flex justify-center items-center h-full">
+                            <span className="text-3xl text-white bg-gray-700 p-6 rounded-md font-semibold">
+                                Você não possui atividades
+                            </span>
+                        </div>
+                    )}
+                </div>
+
+                <button
+                    className="absolute bottom-6 left-6 bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center justify-center"
+                    onClick={() => setIsCreating(true)}
+                >
+                    <i className="fas fa-plus mr-2"></i> Criar Atividade
                 </button>
-                <div className="text-xl font-bold">Dashboard</div>
-                <div className="space-x-4 hidden md:block">
-                    <a className="hover:text-gray-400" href="#">Home</a>
-                    <a className="hover:text-gray-400" href="#">Tasks</a>
-                    <a className="hover:text-gray-400" href="#">Profile</a>
-                </div>
-            </nav>
-            <nav className="bg-gray-700 p-4 flex justify-between items-center">
-                <div className="space-x-4">
-                    <a className="hover:text-gray-400" href="#">Overview</a>
-                    <a className="hover:text-gray-400" href="#">Projects</a>
-                    <a className="hover:text-gray-400" href="#">Calendar</a>
-                    <a className="hover:text-gray-400" href="#">Reports</a>
-                </div>
-            </nav>
-            <div className="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <div className="bg-gray-700 p-4 rounded-lg shadow-md">
-                    <img alt="Placeholder image for Task 1" className="w-full h-32 object-cover rounded-md mb-4" height="200" src="https://storage.googleapis.com/a1aa/image/Xve2bQ4z1YVQSauTiybnPwUkwGRj8sflOjt0gkWz4hhNK85TA.jpg" width="300"/>
-                    <h2 className="text-xl font-bold mb-2">Task 1</h2>
-                    <span className="bg-red-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">High Priority</span>
-                    <p>Description for task 1</p>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-lg shadow-md">
-                    <img alt="Placeholder image for Task 2" className="w-full h-32 object-cover rounded-md mb-4" height="200" src="https://storage.googleapis.com/a1aa/image/E2imKBXnkv7iKpnF9GsYdw4xVPeJJJuGbAfzcQUYPIiOK85TA.jpg" width="300"/>
-                    <h2 className="text-xl font-bold mb-2">Task 2</h2>
-                    <span className="bg-yellow-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Medium Priority</span>
-                    <p>Description for task 2</p>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-lg shadow-md">
-                    <img alt="Placeholder image for Task 3" className="w-full h-32 object-cover rounded-md mb-4" height="200" src="https://storage.googleapis.com/a1aa/image/ri8SXD1c3sovIBqTGfprvp4GCfupi8clH51GkVyPjeukU4znA.jpg" width="300"/>
-                    <h2 className="text-xl font-bold mb-2">Task 3</h2>
-                    <span className="bg-green-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Low Priority</span>
-                    <p>Description for task 3</p>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-lg shadow-md">
-                    <img alt="Placeholder image for Task 4" className="w-full h-32 object-cover rounded-md mb-4" height="200" src="https://storage.googleapis.com/a1aa/image/Puwee4YeJPOveTi6L3eG5IUarVjF3AMQDgm5pFI4F4WEShPfE.jpg" width="300"/>
-                    <h2 className="text-xl font-bold mb-2">Task 4</h2>
-                    <span className="bg-red-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">High Priority</span>
-                    <p>Description for task 4</p>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-lg shadow-md">
-                    <img alt="Placeholder image for Task 5" className="w-full h-32 object-cover rounded-md mb-4" height="200" src="https://storage.googleapis.com/a1aa/image/96vI10aIaXa1PlUfeTloOnpf5ZuWII7urnr81s4piFynU4znA.jpg" width="300"/>
-                    <h2 className="text-xl font-bold mb-2">Task 5</h2>
-                    <span className="bg-yellow-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Medium Priority</span>
-                    <p>Description for task 5</p>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-lg shadow-md">
-                    <img alt="Placeholder image for Task 6" className="w-full h-32 object-cover rounded-md mb-4" height="200" src="https://storage.googleapis.com/a1aa/image/K1gdZAmry45HERJezWdysYe8r3sjTYbTFnJHAoGEsDNLK85TA.jpg" width="300"/>
-                    <h2 className="text-xl font-bold mb-2">Task 6</h2>
-                    <span className="bg-green-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Low Priority</span>
-                    <p>Description for task 6</p>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-lg shadow-md">
-                    <img alt="Placeholder image for Task 7" className="w-full h-32 object-cover rounded-md mb-4" height="200" src="https://storage.googleapis.com/a1aa/image/MlOIjtomJ1JSNFWlPHPgAc76jf1MyfFKzB3B11JORfsfownPB.jpg" width="300"/>
-                    <h2 className="text-xl font-bold mb-2">Task 7</h2>
-                    <span className="bg-red-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">High Priority</span>
-                    <p>Description for task 7</p>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-lg shadow-md">
-                    <img alt="Placeholder image for Task 8" className="w-full h-32 object-cover rounded-md mb-4" height="200" src="https://storage.googleapis.com/a1aa/image/rjOf3v3ef3c1iINxxgHcdz4eI9xl8CYegfGdLO9yWMCOjCf8JA.jpg" width="300"/>
-                    <h2 className="text-xl font-bold mb-2">Task 8</h2>
-                    <span className="bg-yellow-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Medium Priority</span>
-                    <p>Description for task 8</p>
-                </div>
+
+                {/* Popup de criação de atividade */}
+                {isCreating && (
+                    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+                        <div className="bg-white p-8 rounded-lg w-96">
+                            <h2 className="text-xl text-black font-bold mb-4">Criar Nova Atividade</h2>
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700">Nome</label>
+                                    <input
+                                        type="text"
+                                        name="nome"
+                                        value={newActivity.nome}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 border rounded-md text-gray-400"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700">Descrição</label>
+                                    <textarea
+                                        name="descricao"
+                                        value={newActivity.descricao}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 border rounded-md text-gray-400"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700">Tempo de Duração (em minutos)</label>
+                                    <input
+                                        type="number"
+                                        name="tempoDuracao"
+                                        value={newActivity.tempoDuracao}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 border rounded-md text-gray-400"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700">Data de Início</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="dataInicio"
+                                        value={newActivity.dataInicio}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-600 text-gray-400"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700">Data de Fim</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="dataFim"
+                                        value={newActivity.dataFim}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-600 text-gray-400"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700">Local</label>
+                                    <input
+                                        type="text"
+                                        name="local"
+                                        value={newActivity.local}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 border rounded-md text-gray-400"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700">Status</label>
+                                    <select
+                                        name="status"
+                                        value={newActivity.status}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 border rounded-md text-gray-400"
+                                        required
+                                        >
+                                        <option value="aberta">Aberta</option>
+                                        <option value="em andamento">Em andamento</option>
+                                        <option value="concluida">Concluída</option>
+                                    </select>
+                                </div>
+                                <div className="flex justify-end space-x-4">
+                                <button
+                                        type="button"
+                                        onClick={handleCancel}
+                                        className="bg-gray-400 text-white px-4 py-2 rounded-md"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                                    >
+                                        Criar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
             </div>
         </div>
-    </div>
-  );
+    );
 };
 
 export default Home;
