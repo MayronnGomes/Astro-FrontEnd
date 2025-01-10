@@ -55,7 +55,8 @@ const ExternalMember = () => {
                     cpf: '',
                 });
             } else {
-                Toast('error', 'Erro ao cadastrar membro externo');
+                const data = await response.json();
+                Toast('error', data.errors[0].msg || 'Erro ao cadastrar membro externo');
             }
         } catch (err) {
             if (err instanceof Yup.ValidationError) {
