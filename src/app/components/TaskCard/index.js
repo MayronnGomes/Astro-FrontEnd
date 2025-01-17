@@ -7,9 +7,9 @@ const TaskCard = ({ task }) => {
     const { nome, descricao, id } = task;
 
     const priorityClasses = {
-        Low: "bg-green-500",
-        Medium: "bg-yellow-500",
-        High: "bg-red-500",
+        Baixa: "bg-green-500",
+        Média: "bg-yellow-500",
+        Alta: "bg-red-500",
     };
 
     const handlePriorityChange = async (newPriority) => {
@@ -35,33 +35,33 @@ const TaskCard = ({ task }) => {
                 onClick={() => setIsPriorityMenuOpen(!isPriorityMenuOpen)}
                 className={`${priorityClasses[currentPriority] || "bg-gray-500"} text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded cursor-pointer`}
             >
-                {currentPriority} Priority
+                Prioridade {currentPriority}
             </span>
 
             {isPriorityMenuOpen && (
                 <ul className="dropdown-menu dropdown-menu-lg-end bg-gray-800 p-2 rounded-lg shadow-lg absolute z-10 w-40 mt-2">
                     <li>
                         <button
-                            onClick={() => handlePriorityChange('Low')}
+                            onClick={() => handlePriorityChange('Baixa')}
                             className="dropdown-item text-white mb-2 w-full px-4 py-2 rounded hover:bg-gray-600"
                         >
-                            Low Priority
+                            Prioridade Baixa
                         </button>
                     </li>
                     <li>
                         <button
-                            onClick={() => handlePriorityChange('Medium')}
+                            onClick={() => handlePriorityChange('Média')}
                             className="dropdown-item text-white mb-2 w-full px-4 py-2 rounded hover:bg-gray-600"
                         >
-                            Medium Priority
+                            Prioridade Média
                         </button>
                     </li>
                     <li>
                         <button
-                            onClick={() => handlePriorityChange('High')}
+                            onClick={() => handlePriorityChange('Alta')}
                             className="dropdown-item text-white mb-2 w-full px-4 py-2 rounded hover:bg-gray-600"
                         >
-                            High Priority
+                            Prioridade Alta
                         </button>
                     </li>
                 </ul>
