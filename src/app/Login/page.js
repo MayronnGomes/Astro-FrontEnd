@@ -66,9 +66,9 @@ const Login = () => {
             const data = await response.json();
 
             if (response.ok) {
-                const { token, id, nome } = data;
+                const { token, id, nome, tipo } = data;
                 localStorage.setItem('token', token);
-                localStorage.setItem('user', JSON.stringify({ id, nome }));
+                localStorage.setItem('user', JSON.stringify({ id, nome, tipo }));
                 Toast('success', 'Login realizado com sucesso!');
                 router.push('/Home');
             } else {
@@ -143,8 +143,7 @@ const Login = () => {
                                     type="text"
                                     id="email"
                                     name="email"
-                                    placeholder="000.000.000-00"
-                                    value={email}
+                                    placeholder="Entre com seu Email"
                                 />
                                 {errors.email && (
                                     <p className="text-red-500 text-xs">{errors.email}</p>
