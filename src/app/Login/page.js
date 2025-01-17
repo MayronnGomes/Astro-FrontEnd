@@ -10,21 +10,6 @@ const Login = () => {
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState("internal");
-    const [cpf, setCpf] = useState("");
-
-    const formatCPF = (value) => {
-        const numericValue = value.replace(/\D/g, "");
-        return numericValue
-            .replace(/^(\d{3})(\d)/, "$1.$2")
-            .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
-            .replace(/\.(\d{3})(\d)/, ".$1-$2")
-            .slice(0, 14);
-    };
-
-    const handleCpfChange = (event) => {
-        const formattedCpf = formatCPF(event.target.value);
-        setCpf(formattedCpf);
-    };
 
     const internalValidationSchema = Yup.object({
         user: Yup.string()
@@ -37,9 +22,9 @@ const Login = () => {
     });
 
     const externalValidationSchema = Yup.object({
-        cpf: Yup.string()
-            .matches(/^(\d{3})\.(\d{3})\.(\d{3})-(\d{2})$/, "CPF deve conter exatamente 11 dígitos")
-            .required("CPF é obrigatório"),
+        email: Yup.string()
+            .email("E-mail inválido")
+            .required("E-mail é obrigatório"),
         senha: Yup.string()
             .min(8, "Senha deve ter no mínimo 8 caracteres")
             .required("Senha é obrigatória"),
@@ -52,7 +37,7 @@ const Login = () => {
         const formData =
             activeTab === "internal"
                 ? { user: form.user.value, senha: form.senha.value }
-                : { cpf: form.cpf.value, senha: form.senha.value };
+                : { email: form.email.value, senha: form.senha.value };
 
         const validationSchema =
             activeTab === "internal"
@@ -150,20 +135,19 @@ const Login = () => {
                     {activeTab === "external" && (
                         <>
                             <div className="mb-4">
-                                <label className="block text-base mb-2" htmlFor="cpf">
-                                    CPF
+                                <label className="block text-base mb-2" htmlFor="email">
+                                    Email
                                 </label>
                                 <input
                                     className="w-full p-2 border border-gray-300 rounded text-black"
                                     type="text"
-                                    id="cpf"
-                                    name="cpf"
+                                    id="email"
+                                    name="email"
                                     placeholder="000.000.000-00"
-                                    value={cpf}
-                                    onChange={handleCpfChange}
+                                    value={email}
                                 />
-                                {errors.cpf && (
-                                    <p className="text-red-500 text-xs">{errors.cpf}</p>
+                                {errors.email && (
+                                    <p className="text-red-500 text-xs">{errors.email}</p>
                                 )}
                             </div>
                         </>

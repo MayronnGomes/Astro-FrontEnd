@@ -19,8 +19,16 @@ const ExternalMember = () => {
         email: Yup.string().email('Email inválido').required('Email é obrigatório'),
         senha: Yup.string().min(8, 'A senha deve ter pelo menos 6 caracteres').required('Senha é obrigatória'),
         cpf: Yup.string()
-            .matches(/^\d{11}$/, 'CPF deve conter exatamente 11 números')
-            .required('CPF é obrigatório'),
+            .nullable()
+            .notRequired()
+            .test(
+                'is-valid-cpf',
+                'CPF deve conter exatamente 11 números',
+                (value) => {
+                    if (!value) return true;
+                    return /^\d{11}$/.test(value);
+                }
+            ),
     });
 
     const handleInputChange = (e) => {
