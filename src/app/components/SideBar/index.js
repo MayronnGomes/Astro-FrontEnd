@@ -9,13 +9,20 @@ const SideBar = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeItem, setActiveItem] = useState('');
     const [user, setUser] = useState(null);
-    const [expanded, setExpanded] = useState(null);
+    const [expandedItems, setExpandedItems] = useState({});
+    const [expandedChildren, setExpandedChildren] = useState({});
     const [AcoesExtensao, setAcoesExtensao] = useState([]);
 
     const tipoUsuario = {
         aluno: 'Aluno',
         externo: 'Membro Externo',
-        coordenador: 'Coordenador' 
+        coordenador: 'Coordenador'
+    }
+
+    const niveisExtensao = {
+        programa: 'Programas',
+        projeto: 'Projetos',
+        curso: 'Cursos, Eventos e Prestações de Serviço'
     }
 
     useEffect(() => {
@@ -53,6 +60,7 @@ const SideBar = () => {
             Toast('error', 'Erro ao carregar as Ações de Extensão');
         }
     }
+    
 
     useEffect(() => {
         if (user && user.id) {
@@ -68,8 +76,99 @@ const SideBar = () => {
         setActiveItem(item);
     };
 
-    const toggleExpansion = (tipo) => {
-        setExpanded(expanded === tipo ? null : tipo);
+    // const toggleExpansion = (id) => {
+    //     setExpandedItems((prev) => ({
+    //         ...prev,
+    //         [id]: !prev[id],
+    //     }));
+    // };
+
+    const toggleExpansion = (id) => {
+        setExpandedItems((prev) => {
+            // Se o item já está expandido, ele será colapsado
+            if (prev[id]) {
+                return {
+                    ...prev,
+                    [id]: false,
+                };
+            }
+        
+            // Caso contrário, expande o item e colapsa os outros
+            const updatedState = Object.keys(prev).reduce((acc, key) => {
+                acc[key] = false;  // Colapsa todos os outros itens
+                return acc;
+            }, {});
+        
+            // Expande o item selecionado
+            updatedState[id] = true;
+        
+            return updatedState;
+        });
+
+        // Resetar a expansão dos filhos quando o item pai for expandido
+        if (!expandedItems[id]) {
+            setExpandedChildren({}); // Fecha todos os filhos quando o pai for expandido
+        }
+    };
+
+    const toggleChildExpansion = (parentId, childId) => {
+        setExpandedChildren((prev) => ({
+            ...prev,
+            [parentId]: {
+                ...prev[parentId],
+                [childId]: !prev[parentId]?.[childId],
+            },
+        }));
+    };
+
+    const flattenAcoesPorTipo = (acoes, tipo) => {
+        let resultado = [];
+
+        const processarAcoes = (lista) => {
+            lista.forEach((acao) => {
+                if (acao.tipo === tipo) {
+                    resultado.push(acao);
+                }
+                if (acao.filhos?.length > 0) {
+                    processarAcoes(acao.filhos);
+                }
+            });
+        };
+
+        processarAcoes(acoes);
+        return resultado;
+    };
+
+    const renderAcoes = (acoes, parentId) => {
+        return (
+            <ul className="pl-3 mt-2">
+                {acoes.map((acao) => (
+                    <li key={acao.id} className="mb-2 text-gray-500">
+                        <div
+                            className={`flex items-center p-2 rounded bg-gray-800 cursor-pointer hover:bg-gray-700`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                console.log('aq');
+                            }}
+                        >
+                            {acao.nome}
+                            {acao.filhos?.length > 0 && (
+                                <i
+                                    className={`fas fa-arrow-${expandedChildren[parentId]?.[acao.id] ? 'down' : 'right'} ml-auto cursor-pointer hover:text-blue-500`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleChildExpansion(parentId, acao.id);
+                                    }}
+                                ></i>
+                            )}
+                        </div>
+
+                        {/* Renderiza os filhos se o item estiver expandido */}
+                        {expandedChildren[parentId]?.[acao.id] && acao.filhos?.length > 0 && renderAcoes(acao.filhos)}
+                    </li>
+                ))}
+            </ul>
+        );
     };
 
     return (
@@ -133,69 +232,26 @@ const SideBar = () => {
                 <div className="mb-6 border-b border-gray-700 pb-4">
                     <div className="mb-2 text-gray-400">Ações de Extensão</div>
                     <ul>
-                        <li className="mb-2">
-                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Programa' && expanded === 'programa' ? 'border-l-4 border-blue-600' : ''}`}
-                                href="#"
-                                onClick={() => {toggleExpansion('programa'); handleClick('Programa')}}
-                            >
-                                <i className="fas fa-project-diagram mr-3"></i> Programas
-                                <i className={`fas fa-arrow-${expanded === 'programa' ? 'down' : 'right'} ml-auto`}></i>
-                            </a>
+                        {['programa', 'projeto', 'curso'].map((tipo) => (
+                            <li key={tipo} className="mb-2">
+                                <div
+                                    className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === tipo && expandedItems[tipo] ? 'border-l-4 border-blue-600' : ''}`}
+                                    onClick={() => { toggleExpansion(tipo); handleClick(tipo) }}
+                                >
+                                    <i className="fas fa-project-diagram mr-3"></i> {niveisExtensao[tipo]}
+                                    <i
+                                        className={`fas fa-arrow-${expandedItems[tipo] ? 'down' : 'right'
+                                            } ml-auto`}
+                                    ></i>
+                                </div>
 
-                            {expanded === 'programa' && (
-                                <ul className="pl-6 mt-2">
-                                    {/* Listando as ações do tipo 'programa' */}
-                                    {AcoesExtensao.filter(acao => acao.tipo === 'programa').map(acao => (
-                                        <li key={acao.id} className="text-gray-500">
-                                            {acao.nome}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-
-                        </li>
-                        <li className="mb-2">
-                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Projeto' && expanded === 'projeto' ? 'border-l-4 border-blue-600' : ''}`}
-                                href="#"
-                                onClick={() => {toggleExpansion('projeto'); handleClick('Projeto');}}
-                            >
-                                <i className="fas fa-project-diagram mr-3"></i> Projetos
-                                <i className={`fas fa-arrow-${expanded === 'projeto' ? 'down' : 'right'} ml-auto`}></i>
-                            </a>
-
-                            {expanded === 'projeto' && (
-                                <ul className="pl-6 mt-2">
-                                    {/* Listando as ações do tipo 'projeto' */}
-                                    {AcoesExtensao.filter(acao => acao.tipo === 'projeto').map(acao => (
-                                        <li key={acao.id} className="text-gray-500">
-                                            {acao.nome}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-
-                        </li>
-                        <li className="mb-2">
-                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Curso' && expanded === 'curso' ? 'border-l-4 border-blue-600' : ''}`}
-                                href="#"
-                                onClick={() => {toggleExpansion('curso'); handleClick('Curso');}}
-                            >
-                                <i className="fas fa-project-diagram mr-3"></i> Cursos, Eventos e Prestação de Serviço
-                                <i className={`fas fa-arrow-${expanded === 'curso' ? 'down' : 'right'} ml-auto`}></i>
-                            </a>
-
-                            {expanded === 'curso' && (
-                                <ul className="pl-6 mt-2">
-                                    {/* Listando as ações do tipo 'curso' */}
-                                    {AcoesExtensao.filter(acao => acao.tipo === 'curso').map(acao => (
-                                        <li key={acao.id} className="text-gray-500">
-                                            {acao.nome}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-
-                        </li>
+                                {expandedItems[tipo] && (
+                                    <ul className="pl-6 mt-2">
+                                        {renderAcoes(flattenAcoesPorTipo(AcoesExtensao, tipo), tipo)}
+                                    </ul>
+                                )}
+                            </li>
+                        ))}
                     </ul>
                 </div>
                 <div className="mb-6 border-b border-gray-700 pb-4">
