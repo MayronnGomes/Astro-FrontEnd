@@ -31,6 +31,14 @@ const Home = () => {
         }
     }, []);
 
+    const filteredButtons = buttons.filter(button => {
+        if (user?.tipo === "coordenador") {
+            return true;
+        }
+        console.log(user);
+        return button.label === "Atividades";
+    });
+
     return (
         <div className="flex h-screen">
             <SideBar />
@@ -40,15 +48,10 @@ const Home = () => {
                         <i className="fas fa-bars"></i>
                     </button>
                     <div className="text-xl font-bold">Dashboard</div>
-                    <div className="space-x-4 hidden md:block">
-                        <a className="hover:text-gray-400" href="#">Home</a>
-                        <a className="hover:text-gray-400" href="#">Tasks</a>
-                        <a className="hover:text-gray-400" href="#">Profile</a>
-                    </div>
                 </nav>
                 <nav className="bg-gray-700 flex justify-between items-center">
                     <div className="space-x-4">
-                        {buttons.map((button, index) => (
+                        {filteredButtons.map((button, index) => (
                             <button
                                 key={index}
                                 onClick={() => setSelected(button.label)}

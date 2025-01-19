@@ -172,7 +172,7 @@ const Activities = () => {
             </div>
 
             <button
-                className="absolute bottom-6 left-6 bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center justify-center"
+                className={` ${user?.tipo === "coordenador" ? 'flex' : 'hidden'} absolute bottom-6 left-6 bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg items-center justify-center`}
                 onClick={() => setIsCreating(true)}
             >
                 <i className="fas fa-plus mr-2"></i> Criar Atividade
