@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
-  
+
   const goToLogin = () => {
-      router.push('/Login');
+    router.push('/Login');
   }
 
   return (
@@ -107,7 +107,7 @@ export default function Home() {
     //     </a>
     //   </footer>
     // </div>
-    <div><button onClick={goToLogin}>Login</button></div>
+      <div><button onClick={goToLogin}>Login</button></div>
   );
 }
 
