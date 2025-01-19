@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Toast } from '../Toast';
+import { useSidebar } from '@/app/contexts/SideBarContext';
 
 const SideBar = () => {
     const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [activeItem, setActiveItem] = useState('');
+    const { activeItem, setActiveItem } = useSidebar();
     const [user, setUser] = useState(null);
     const [expandedItems, setExpandedItems] = useState({});
     const [expandedChildren, setExpandedChildren] = useState({});
@@ -60,7 +61,7 @@ const SideBar = () => {
             Toast('error', 'Erro ao carregar as Ações de Extensão');
         }
     }
-    
+
 
     useEffect(() => {
         if (user && user.id) {
@@ -68,20 +69,9 @@ const SideBar = () => {
         }
     }, [user]);
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
-
     const handleClick = (item) => {
-        setActiveItem(item);
+        setActiveItem(item);        
     };
-
-    // const toggleExpansion = (id) => {
-    //     setExpandedItems((prev) => ({
-    //         ...prev,
-    //         [id]: !prev[id],
-    //     }));
-    // };
 
     const toggleExpansion = (id) => {
         setExpandedItems((prev) => {
@@ -92,16 +82,16 @@ const SideBar = () => {
                     [id]: false,
                 };
             }
-        
+
             // Caso contrário, expande o item e colapsa os outros
             const updatedState = Object.keys(prev).reduce((acc, key) => {
                 acc[key] = false;  // Colapsa todos os outros itens
                 return acc;
             }, {});
-        
+
             // Expande o item selecionado
             updatedState[id] = true;
-        
+
             return updatedState;
         });
 
@@ -148,7 +138,7 @@ const SideBar = () => {
                             className={`flex items-center p-2 rounded bg-gray-800 cursor-pointer hover:bg-gray-700`}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log('aq');
+                                router.push('/Dashboard');
                             }}
                         >
                             {acao.nome}
@@ -172,16 +162,9 @@ const SideBar = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <button
-                className="md:hidden p-4 text-white"
-                onClick={toggleSidebar}
-            >
-                <i className="fas fa-bars"></i>
-            </button>
-
+        <div>
             <div
-                className={`w-full md:w-64 bg-gray-900 text-white h-full p-4 transition-transform ${isSidebarOpen ? 'transform-none' : '-translate-x-full'} md:translate-x-0 shadow-[8px_0_10px_rgba(0,0,0,0.8)]`}
+                className={`min-h-screen flex-col w-full md:w-64 bg-gray-900 text-white p-4 transition-transform ${isSidebarOpen ? 'transform-none' : '-translate-x-full'} md:translate-x-0 shadow-[8px_0_10px_rgba(0,0,0,0.8)]`}
             >
                 <div className="flex items-center mb-8 border-b border-gray-700 pb-4">
                     <img alt="Logo" className="w-8 h-8 mr-2" height="32" src="https://storage.googleapis.com/a1aa/image/5vuz4T3qMe3aNCifaPGbBvuEkGlYZvMO7rI9flq6TBo4k4znA.jpg" width="32" />
@@ -199,31 +182,27 @@ const SideBar = () => {
                     <div className="mb-2 text-gray-400">Menu</div>
                     <ul>
                         <li className="mb-2">
-                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 ${activeItem === 'Home' ? 'border-l-4 border-blue-600' : ''}`}
-                                href="#"
-                                onClick={() => handleClick('Home')}>
+                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Home' ? 'border-l-4 border-blue-600' : ''}`}
+                                onClick={() => {setExpandedItems({}); handleClick('Home'); router.push('/Home');}}>
                                 <i className="fas fa-home mr-3"></i> Início
                             </a>
                         </li>
                         <li className="mb-2">
-                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 ${activeItem === 'Task' ? 'border-l-4 border-blue-600' : ''}`}
-                                href="#"
-                                onClick={() => handleClick('Task')}>
+                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Task' ? 'border-l-4 border-blue-600' : ''}`}
+                                onClick={() => {setExpandedItems({}); handleClick('Task'); router.push('/Task');}}>
                                 <i className="fas fa-tasks mr-3"></i> Atividades
                                 <span className="ml-auto bg-blue-600 text-white text-xs rounded-full px-2 py-1">12</span>
                             </a>
                         </li>
                         <li className="mb-2">
-                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 ${activeItem === 'Activity' ? 'border-l-4 border-blue-600' : ''}`}
-                                href="#"
-                                onClick={() => handleClick('Activity')}>
+                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Activity' ? 'border-l-4 border-blue-600' : ''}`}
+                                onClick={() => {setExpandedItems({}); handleClick('Activity'); router.push('/Activity');}}>
                                 <i className="fas fa-chart-line mr-3"></i> Relatório de Atividades
                             </a>
                         </li>
                         <li className="mb-2">
-                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 ${activeItem === 'Notifications' ? 'border-l-4 border-blue-600' : ''}`}
-                                href="#"
-                                onClick={() => handleClick('Notifications')}>
+                            <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Notifications' ? 'border-l-4 border-blue-600' : ''}`}
+                                onClick={() => {setExpandedItems({}); handleClick('Notifications'); router.push('/Notifications');}}>
                                 <i className="fas fa-bell mr-3"></i> Notificações
                             </a>
                         </li>
@@ -236,7 +215,7 @@ const SideBar = () => {
                             <li key={tipo} className="mb-2">
                                 <div
                                     className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === tipo && expandedItems[tipo] ? 'border-l-4 border-blue-600' : ''}`}
-                                    onClick={() => { toggleExpansion(tipo); handleClick(tipo) }}
+                                    onClick={() => { handleClick(tipo); toggleExpansion(tipo);}}
                                 >
                                     <i className="fas fa-project-diagram mr-3"></i> {niveisExtensao[tipo]}
                                     <i
@@ -260,7 +239,7 @@ const SideBar = () => {
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 ${activeItem === 'Settings' ? 'border-l-4 border-blue-600' : ''}`}
                                 href="#"
-                                onClick={() => handleClick('Settings')}>
+                                onClick={() => {setExpandedItems({}); handleClick('Settings')}}>
                                 <i className="fas fa-cog mr-3"></i> Configurações
                             </a>
                         </li>
@@ -269,7 +248,7 @@ const SideBar = () => {
                                 href="https://mail.google.com/mail/?view=cm&fs=1&to=teste@gmail.com&su=Suporte%20Astro&body=Infome%20a%20sua%20dúvida" //alterar o email!!!
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                onClick={() => handleClick('Suporte')}
+                                onClick={() => {setExpandedItems({}); handleClick('Suporte')}}
                             >
                                 <i className="fas fa-life-ring mr-3"></i> Suporte
                             </a>
