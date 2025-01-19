@@ -138,7 +138,7 @@ const SideBar = () => {
                             className={`flex items-center p-2 rounded bg-gray-800 cursor-pointer hover:bg-gray-700`}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                router.push('/Dashboard');
+                                router.push(`/Dashboard?acaoId=${acao.id}`);
                             }}
                         >
                             {acao.nome}

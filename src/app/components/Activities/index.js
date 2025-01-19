@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Toast } from '../Toast';
 import TaskCard from '../TaskCard';
+import { useSearchParams } from 'next/navigation';
 
 const Activities = () => {
+    const searchParams = useSearchParams();
     const [user, setUser] = useState(null);
+    const [acaoId, setAcaoId] = useState(null);
     const [atividades, setAtividades] = useState([]);
     const [membros, setMembros] = useState([]);
     const [filter, setFilter] = useState('');
@@ -21,15 +24,19 @@ const Activities = () => {
     });
 
     useEffect(() => {
+        const storedAcaoId = searchParams.get('acaoId');
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
-    }, []);
+        if (storedAcaoId) {
+            setAcaoId(storedAcaoId);
+        }
+    }, [searchParams]);
 
     async function getAtividades(userId) {
         try {
-            const response = await fetch(`http://localhost:8080/api/atividades/${userId}`, {
+            const response = await fetch(`http://localhost:8080/api/atividades/${userId}${acaoId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

@@ -36,7 +36,6 @@ const Dashboard = () => {
         if (user?.tipo === "coordenador") {
             return true;
         }
-        console.log(user);
         return button.label === "Atividades";
     });
 
