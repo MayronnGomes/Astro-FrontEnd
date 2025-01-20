@@ -3,7 +3,7 @@ import { Toast } from '../Toast';
 import TaskCard from '../TaskCard';
 import { useSearchParams } from 'next/navigation';
 
-const Activities = () => {
+const MyActivities = () => {
     const searchParams = useSearchParams();
     const [user, setUser] = useState(null);
     const [acaoId, setAcaoId] = useState(null);
@@ -37,12 +37,7 @@ const Activities = () => {
     async function getAtividades(userId) {
         try {
 
-            const endpoint =
-                user.tipo === "coordenador"
-                    ? `http://localhost:8080/api/atividadesCoord/${acaoId}`
-                    : `http://localhost:8080/api/atividades/${userId}${acaoId}`;
-
-            const response = await fetch(endpoint, {
+            const response = await fetch(`http://localhost:8080/api/atividades/${userId}${acaoId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -178,7 +173,7 @@ const Activities = () => {
                 ) : (
                     <div className="col-span-full flex justify-center items-center h-full">
                         <span className="text-3xl text-white bg-gray-700 p-6 rounded-md font-semibold">
-                            {user?.tipo === 'coordenador' ? 'Esta Ação não possui atividades' : 'Você não possui atividades nesta ação'}
+                            Você não possui atividades
                         </span>
                     </div>
                 )}
@@ -335,4 +330,4 @@ const Activities = () => {
     );
 };
 
-export default Activities;
+export default MyActivities;

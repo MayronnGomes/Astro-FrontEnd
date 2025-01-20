@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Activities from '../components/Activities';
+import MyActivities from '../components/MyActivities';
 import Members from '../components/Members';
 import ExternalMembers from '../components/ExternalMembers';
 import SideBar from '../components/SideBar';
@@ -13,12 +14,14 @@ const Dashboard = () => {
 
     const buttons = [
         { label: "Atividades", iconClass: "fa fa-tasks" },
+        { label: "Minhas Atividades", iconClass: "fa fa-tasks" },
         { label: "Membros", iconClass: "fa fa-users" },
         { label: "Cadastrar Membros Externos", iconClass: "fa fa-user-plus" },
     ];
 
     const componentsMap = {
         "Atividades": <Activities />,
+        "Minhas Atividades": <MyActivities />,
         "Membros": <Members />,
         "Cadastrar Membros Externos": <ExternalMembers />,
     };

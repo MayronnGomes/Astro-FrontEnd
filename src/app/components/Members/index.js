@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Toast } from '../Toast';
+import { useSearchParams } from 'next/navigation';
 
 const Members = () => {
+    const searchParams = useSearchParams();
+    const [user, setUser] = useState(null);
+    const [acaoId, setAcaoId] = useState(null);
     const [members, setMembers] = useState([]);
     const [filter, setFilter] = useState('');
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const storedAcaoId = searchParams.get('acaoId');
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+        if (storedAcaoId) {
+            setAcaoId(storedAcaoId);
+        }
+    }, [searchParams]);
 
     const fetchMembers = async () => {
         setLoading(true);
@@ -37,18 +52,20 @@ const Members = () => {
 
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8080/api/membros/${id}`, {
+            const response = await fetch(`http://localhost:8080/api/membros/${id}${acaoId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
 
+            const data = await response.json()
+
             if (response.ok) {
                 setMembers((prev) => prev.filter((member) => member.id !== id));
                 Toast('success', 'Membro excluído com sucesso!');
             } else {
-                Toast('error', response.json.error[0].msg || 'Erro ao excluir membro');
+                Toast('error', data.errors[0].msg || 'Erro ao excluir membro');
             }
         } catch (error) {
             console.error('Erro ao excluir membro:', error);
@@ -69,7 +86,7 @@ const Members = () => {
     return (
         <div className="w-full p-8 bg-gray-800 text-white h-full">
             <h1 className="text-2xl font-bold mb-4">Gerenciar Membros</h1>
-            
+
             {/* Campo de busca */}
             <div className="mb-4">
                 <input
@@ -99,7 +116,7 @@ const Members = () => {
                             {members
                                 .filter(
                                     (member) =>
-                                        member.nome.toLowerCase().includes(filter.toLowerCase())
+                                        member.nome.toLowerCase().includes(filter.toLowerCase()) && member.id !== user?.id
                                 )
                                 .map((member) => (
                                     <tr key={member.id}>
