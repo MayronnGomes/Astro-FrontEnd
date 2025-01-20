@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 const TaskCard = ({ task }) => {
+    const [user, setUser] = useState(null);
     const [currentPriority, setCurrentPriority] = useState(task.prioridade);
     const [isPriorityMenuOpen, setIsPriorityMenuOpen] = useState(false);
 
@@ -14,6 +15,13 @@ const TaskCard = ({ task }) => {
 
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -48,7 +56,7 @@ const TaskCard = ({ task }) => {
             <h2 className="text-xl font-bold mb-2 truncate">{nome}</h2>
             <span
                 ref={buttonRef}
-                onClick={() => setIsPriorityMenuOpen(!isPriorityMenuOpen)}
+                onClick={() => user.tipo === 'coordenador' ? setIsPriorityMenuOpen(!isPriorityMenuOpen) : undefined}
                 className={`${priorityClasses[currentPriority] || "bg-gray-500"} text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded cursor-pointer`}
             >
                 Prioridade {currentPriority}

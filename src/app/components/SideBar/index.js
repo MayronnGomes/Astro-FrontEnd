@@ -70,7 +70,7 @@ const SideBar = () => {
     }, [user]);
 
     const handleClick = (item) => {
-        setActiveItem(item);        
+        setActiveItem(item);
     };
 
     const toggleExpansion = (id) => {
@@ -129,11 +129,19 @@ const SideBar = () => {
         return resultado;
     };
 
-    const renderAcoes = (acoes, parentId) => {
+    const renderAcoes = (acoes, parentId, renderedKeys = new Set()) => {
         return (
             <ul className="pl-3 mt-2">
-                {acoes.map((acao) => (
-                    <li key={acao.id} className="mb-2 text-gray-500">
+                {acoes.map((acao) => {
+                    if (renderedKeys.has(acao.id)) {
+                        // Ignora ações já renderizadas
+                        return null;
+                    }
+
+                    // Adiciona a chave da ação atual ao conjunto
+                    renderedKeys.add(acao.id);
+
+                    return (<li key={acao.id} className="mb-2 text-gray-500">
                         <div
                             className={`flex items-center p-2 rounded bg-gray-800 cursor-pointer hover:bg-gray-700`}
                             onClick={(e) => {
@@ -154,9 +162,10 @@ const SideBar = () => {
                         </div>
 
                         {/* Renderiza os filhos se o item estiver expandido */}
-                        {expandedChildren[parentId]?.[acao.id] && acao.filhos?.length > 0 && renderAcoes(acao.filhos)}
+                        {expandedChildren[parentId]?.[acao.id] && acao.filhos?.length > 0 && renderAcoes(acao.filhos, acao.id, renderedKeys)}
                     </li>
-                ))}
+                    );
+                })}
             </ul>
         );
     };
@@ -183,26 +192,26 @@ const SideBar = () => {
                     <ul>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Home' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => {setExpandedItems({}); handleClick('Home'); router.push('/Home');}}>
+                                onClick={() => { setExpandedItems({}); handleClick('Home'); router.push('/Home'); }}>
                                 <i className="fas fa-home mr-3"></i> Início
                             </a>
                         </li>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Task' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => {setExpandedItems({}); handleClick('Task'); router.push('/Task');}}>
+                                onClick={() => { setExpandedItems({}); handleClick('Task'); router.push('/Task'); }}>
                                 <i className="fas fa-tasks mr-3"></i> Atividades
                                 <span className="ml-auto bg-blue-600 text-white text-xs rounded-full px-2 py-1">12</span>
                             </a>
                         </li>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Activity' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => {setExpandedItems({}); handleClick('Activity'); router.push('/Activity');}}>
+                                onClick={() => { setExpandedItems({}); handleClick('Activity'); router.push('/Activity'); }}>
                                 <i className="fas fa-chart-line mr-3"></i> Relatório de Atividades
                             </a>
                         </li>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Notifications' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => {setExpandedItems({}); handleClick('Notifications'); router.push('/Notifications');}}>
+                                onClick={() => { setExpandedItems({}); handleClick('Notifications'); router.push('/Notifications'); }}>
                                 <i className="fas fa-bell mr-3"></i> Notificações
                             </a>
                         </li>
@@ -215,7 +224,7 @@ const SideBar = () => {
                             <li key={tipo} className="mb-2">
                                 <div
                                     className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === tipo && expandedItems[tipo] ? 'border-l-4 border-blue-600' : ''}`}
-                                    onClick={() => { handleClick(tipo); toggleExpansion(tipo);}}
+                                    onClick={() => { handleClick(tipo); toggleExpansion(tipo); }}
                                 >
                                     <i className="fas fa-project-diagram mr-3"></i> {niveisExtensao[tipo]}
                                     <i
@@ -239,7 +248,7 @@ const SideBar = () => {
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 ${activeItem === 'Settings' ? 'border-l-4 border-blue-600' : ''}`}
                                 href="#"
-                                onClick={() => {setExpandedItems({}); handleClick('Settings')}}>
+                                onClick={() => { setExpandedItems({}); handleClick('Settings') }}>
                                 <i className="fas fa-cog mr-3"></i> Configurações
                             </a>
                         </li>
@@ -248,7 +257,7 @@ const SideBar = () => {
                                 href="https://mail.google.com/mail/?view=cm&fs=1&to=teste@gmail.com&su=Suporte%20Astro&body=Infome%20a%20sua%20dúvida" //alterar o email!!!
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                onClick={() => {setExpandedItems({}); handleClick('Suporte')}}
+                                onClick={() => { setExpandedItems({}); handleClick('Suporte') }}
                             >
                                 <i className="fas fa-life-ring mr-3"></i> Suporte
                             </a>
