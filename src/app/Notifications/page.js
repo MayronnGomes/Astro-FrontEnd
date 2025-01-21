@@ -44,8 +44,12 @@ const Notifications = () => {
 
             if (response.ok) {
                 Toast('success', 'Notificações carregadas com sucesso!');
-                setNotificacoes(data.notificacoes);
+
                 console.log(data.notificacoes);
+                const sortedNotifications = data.notificacoes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                setNotificacoes(data.notificacoes);
+                console.log(sortedNotifications);
             } else {
                 Toast('error', 'Erro ao carregar notificações');
             }
@@ -74,11 +78,15 @@ const Notifications = () => {
 
     const updateNotificationStatus = (id, newStatus) => {
         setNotificacoes((prevNotificacoes) => {
+            if (newStatus === null) {
+                return prevNotificacoes.filter((notificacao) => notificacao.id !== id);
+            }
             return prevNotificacoes.map((notificacao) =>
                 notificacao.id === id ? { ...notificacao, status: newStatus } : notificacao
             );
         });
     };
+
 
     return (
         <SidebarProvider>
@@ -112,11 +120,6 @@ const Notifications = () => {
                                     className={`${selected === 'Não Lidas' ? 'bg-blue-600 hover:bg-blue-800' : 'bg-gray-700 hover:bg-gray-800'} text-white px-4 py-2 rounded-full`}
                                     onClick={() => handleSelected('Não Lidas')}>
                                     Não Lidas
-                                </button>
-                                <button
-                                    className={`${selected === 'Por Ação' ? 'bg-blue-600 hover:bg-blue-800' : 'bg-gray-700 hover:bg-gray-800'} text-white px-4 py-2 rounded-full`}
-                                    onClick={() => handleSelected('Por Ação')}>
-                                    Por Ação
                                 </button>
                             </div>
                         </div>

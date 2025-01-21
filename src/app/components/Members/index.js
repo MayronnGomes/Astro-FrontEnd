@@ -21,10 +21,10 @@ const Members = () => {
         }
     }, [searchParams]);
 
-    const fetchMembers = async () => {
+    async function fetchMembers(acaoId) {
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8080/api/membros/${1}`, { // adicionar id da ação de extensão
+            const response = await fetch(`http://localhost:8080/api/membros/${acaoId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,8 +76,10 @@ const Members = () => {
     };
 
     useEffect(() => {
-        fetchMembers();
-    }, []);
+        if (user && user.id && acaoId) {
+            fetchMembers(acaoId);
+        }
+    }, [acaoId]);
 
     const handleFilterChange = (e) => {
         setFilter(e.target.value);
