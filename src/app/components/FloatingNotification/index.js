@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Toast } from '../Toast';
 
 const FloatingNotification = ({ data, updateNotificationStatus }) => {
 
@@ -46,6 +47,29 @@ const FloatingNotification = ({ data, updateNotificationStatus }) => {
 
     };
 
+    const handleDelete = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/notifications/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+            console.log(data);
+
+            if (response.ok) {
+                updateNotificationStatus(id, null);
+                Toast('success', data.msg || 'Notificação excluída com sucesso!')
+            } else {
+                console.error('Erro ao excluir a notificação');
+            }
+        } catch (error) {
+            console.error('Erro ao tentar excluir a notificação:', error);
+        }
+    };
+
     return (
         <div className={`flex items-center justify-between p-4 rounded-lg shadow ${status === 'não Lida' ? 'bg-white' : 'bg-gray-800'
             }`}>
@@ -78,7 +102,8 @@ const FloatingNotification = ({ data, updateNotificationStatus }) => {
                 <button
                     title='Excluir'
                     className={`${status === 'não Lida' ? 'text-gray-700 hover:text-gray-500' : 'text-white hover:text-gray-400'
-                        }`}>
+                        }`}
+                        onClick={handleDelete}>
                     <i className="fa-regular fa-trash-can"></i>
                 </button>
             </div>

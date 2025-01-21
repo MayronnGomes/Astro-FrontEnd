@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Yup from 'yup';
 import { Toast } from '../Toast';
+import { useSearchParams } from 'next/navigation';
 
 const ExternalMember = () => {
+
     const [showPassword, setShowPassword] = useState(false);
+    const [acaoId, setAcaoId] = useState(null);
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+            const storedAcaoId = searchParams.get('acaoId');
+            if (storedAcaoId) {
+                setAcaoId(storedAcaoId);
+            }
+        }, [searchParams]);
 
     const [formData, setFormData] = useState({
         nome: '',
@@ -46,16 +57,23 @@ const ExternalMember = () => {
             await schema.validate(formData, { abortEarly: false });
             setErrors({});
 
+            const payload = {
+                ...formData,
+                acaoId,
+            };
+
             const response = await fetch(`http://localhost:8080/api/userCreate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(payload),
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                Toast('success', 'Membro externo cadastrado com sucesso!');
+                Toast('success', data.msg || 'Membro externo cadastrado com sucesso!');
                 setFormData({
                     nome: '',
                     email: '',
@@ -63,7 +81,6 @@ const ExternalMember = () => {
                     cpf: '',
                 });
             } else {
-                const data = await response.json();
                 Toast('error', data.errors[0].msg || 'Erro ao cadastrar membro externo');
             }
         } catch (err) {
