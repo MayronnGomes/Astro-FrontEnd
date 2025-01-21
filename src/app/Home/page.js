@@ -1,10 +1,19 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import SideBar from '../components/SideBar';
 import { SidebarProvider } from '../contexts/SideBarContext';
+import { useRouter } from 'next/navigation';
 
 const Home = () => {
+    const router = useRouter();
+
+    useEffect(() => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                router.replace('/Login');
+            }
+        }, [router]);
 
     return (
         <SidebarProvider>

@@ -7,8 +7,18 @@ import Members from '../components/Members';
 import ExternalMembers from '../components/ExternalMembers';
 import SideBar from '../components/SideBar';
 import { SidebarProvider } from '../contexts/SideBarContext';
+import { useRouter } from 'next/navigation';
 
 const Dashboard = () => {
+    const router = useRouter();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            router.replace('/Login');
+        }
+    }, [router]);
+
     const [user, setUser] = useState(null);
     const [selected, setSelected] = useState("Atividades");
 

@@ -7,7 +7,6 @@ import { useSidebar } from '@/app/contexts/SideBarContext';
 
 const SideBar = () => {
     const router = useRouter();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { activeItem, setActiveItem } = useSidebar();
     const [user, setUser] = useState(null);
     const [expandedItems, setExpandedItems] = useState({});
@@ -25,13 +24,6 @@ const SideBar = () => {
         projeto: 'Projetos',
         curso: 'Cursos, Eventos e Prestações de Serviço'
     }
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            router.replace('/Login');
-        }
-    }, [router]);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -171,9 +163,9 @@ const SideBar = () => {
     };
 
     return (
-        <div>
+        <div className='h-screen overflow-auto max-w-64 min-w-64'>
             <div
-                className={`min-h-screen flex-col w-full md:w-64 bg-gray-900 text-white p-4 transition-transform ${isSidebarOpen ? 'transform-none' : '-translate-x-full'} md:translate-x-0 shadow-[8px_0_10px_rgba(0,0,0,0.8)]`}
+                className={`min-h-screen flex-col bg-gray-900 text-white p-4 shadow-[8px_0_10px_rgba(0,0,0,0.8)]`}
             >
                 <div className="flex items-center mb-8 border-b border-gray-700 pb-4">
                     <img alt="Logo" className="w-8 h-8 mr-2" height="32" src="https://storage.googleapis.com/a1aa/image/5vuz4T3qMe3aNCifaPGbBvuEkGlYZvMO7rI9flq6TBo4k4znA.jpg" width="32" />
