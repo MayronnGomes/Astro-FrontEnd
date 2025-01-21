@@ -8,6 +8,7 @@ import { useSidebar } from '@/app/contexts/SideBarContext';
 const SideBar = () => {
     const router = useRouter();
     const { activeItem, setActiveItem } = useSidebar();
+    const [pendingAction, setPendingAction] = useState(null);
     const [user, setUser] = useState(null);
     const [expandedItems, setExpandedItems] = useState({});
     const [expandedChildren, setExpandedChildren] = useState({});
@@ -61,9 +62,18 @@ const SideBar = () => {
         }
     }, [user]);
 
-    const handleClick = (item) => {
-        setActiveItem(item);
+    const handleClick = (item, callback) => {
+        setActiveItem(item); // Atualiza o `activeItem`
+        setPendingAction(() => callback); // Define a ação a ser executada após a atualização
     };
+
+    useEffect(() => {
+        console.log(activeItem);
+        if (pendingAction) {
+            pendingAction(); // Executa a ação pendente
+            setPendingAction(null); // Reseta o estado
+        }
+    }, [activeItem, pendingAction]);    
 
     const toggleExpansion = (id) => {
         setExpandedItems((prev) => {
@@ -162,6 +172,10 @@ const SideBar = () => {
         );
     };
 
+    const navigateTo = (url) => {
+        router.push(url); // Redireciona para a página desejada
+    };
+
     return (
         <div className='h-screen overflow-auto max-w-64 min-w-64'>
             <div
@@ -184,26 +198,26 @@ const SideBar = () => {
                     <ul>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Home' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => { setExpandedItems({}); handleClick('Home'); router.push('/Home'); }}>
+                                onClick={() => { setExpandedItems({});  handleClick('Home', () => navigateTo('/Home')) }}>
                                 <i className="fas fa-home mr-3"></i> Início
                             </a>
                         </li>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Task' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => { setExpandedItems({}); handleClick('Task'); router.push('/Task'); }}>
+                                onClick={() => { setExpandedItems({});  handleClick('Task', () => navigateTo('/Task')) }}>
                                 <i className="fas fa-tasks mr-3"></i> Atividades
                                 <span className="ml-auto bg-blue-600 text-white text-xs rounded-full px-2 py-1">12</span>
                             </a>
                         </li>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Activity' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => { setExpandedItems({}); handleClick('Activity'); router.push('/Activity'); }}>
+                                onClick={() => { setExpandedItems({});  handleClick('Activity', () => navigateTo('/Activity')) }}>
                                 <i className="fas fa-chart-line mr-3"></i> Relatório de Atividades
                             </a>
                         </li>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Notifications' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => { setExpandedItems({}); handleClick('Notifications'); router.push('/Notifications'); }}>
+                                onClick={() => { setExpandedItems({});  handleClick('Notifications', () => navigateTo('/Notifications')) }}>
                                 <i className="fas fa-bell mr-3"></i> Notificações
                             </a>
                         </li>
