@@ -59,9 +59,14 @@ const MyActivities = () => {
     }
 
     useEffect(() => {
-        if (user && user.id) {
+        if (user && user.id && acaoId) {
             getAtividades(user.id);
-            getMembros();
+            setSelectedMembros((prevSelected) =>
+                prevSelected.includes(user.id)
+                    ? prevSelected.filter((membroId) => membroId !== user.id)
+                    : [...prevSelected, user.id]
+            );
+            getMembros(acaoId);
         }
     }, [user]);
 
@@ -73,9 +78,9 @@ const MyActivities = () => {
         }));
     };
 
-    async function getMembros() {
+    async function getMembros(acaoId) {
         try {
-            const response = await fetch(`http://localhost:8080/api/membros/${1}`, { //adicionar o id da ação de extensão
+            const response = await fetch(`http://localhost:8080/api/membros/${acaoId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -183,7 +188,7 @@ const MyActivities = () => {
                 className={` ${user?.tipo === "coordenador" ? 'flex' : 'hidden'} absolute bottom-6 left-6 bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg items-center justify-center`}
                 onClick={() => setIsCreating(true)}
             >
-                <i className="fas fa-plus mr-2"></i> Criar Atividade
+                <i className="fas fa-plus mr-2"></i> Criar Atividade Para Mim
             </button>
 
             {/* Popup de criação de atividade */}
