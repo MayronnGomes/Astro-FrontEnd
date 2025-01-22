@@ -260,7 +260,7 @@ const SideBar = () => {
                         </li>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 ${activeItem === 'Suporte' ? 'border-l-4 border-blue-600' : ''}`}
-                                href="https://mail.google.com/mail/?view=cm&fs=1&to=teste@gmail.com&su=Suporte%20Astro&body=Infome%20a%20sua%20dúvida" //alterar o email!!!
+                                href="https://mail.google.com/mail/?view=cm&fs=1&to=suportesistemaastro@gmail.com&su=Suporte%20Astro&body=Infome%20a%20sua%20dúvida"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={() => { setExpandedItems({}); handleClick('Suporte') }}

@@ -64,9 +64,9 @@ const Activities = () => {
     }
 
     useEffect(() => {
-        if (user && user.id) {
+        if (user && user.id && acaoId) {
             getAtividades(user.id);
-            getMembros();
+            getMembros(acaoId);
         }
     }, [user]);
 
@@ -78,9 +78,9 @@ const Activities = () => {
         }));
     };
 
-    async function getMembros() {
+    async function getMembros(acaoId) {
         try {
-            const response = await fetch(`http://localhost:8080/api/membros/${1}`, { //adicionar o id da ação de extensão
+            const response = await fetch(`http://localhost:8080/api/membros/${acaoId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

@@ -16,8 +16,8 @@ const FloatingNotification = ({ data, updateNotificationStatus }) => {
     const mensagem = {
         adicionado: `virou membro ${acaoExtensao.tipo !== 'serviço' ? 'do ' + acaoExtensao.tipo : 'da ' + acaoExtensao.tipo}: ${acaoExtensao.nome}.`,
         removido: `foi removido ${acaoExtensao.tipo !== 'serviço' ? 'do ' + acaoExtensao.tipo : 'da ' + acaoExtensao.tipo}: ${acaoExtensao.nome}.`,
-        criado: `${acaoExtensao.coordenador} atribuiu a você uma atividade: "${atividade ? atividade.nome : ''}".`,
-        finalizado: `${acaoExtensao.coordenador} marcou a atividade: "${atividade ? atividade.nome : ''}" como ${atividade ? atividade.status : ''}.`,
+        criado: `tem uma nova atividade: "${atividade ? atividade.nome : ''}".`,
+        finalizado: `atividade: "${atividade ? atividade.nome : ''}" foi atualizada para ${atividade ? atividade.status : ''}.`,
     };
 
     const icon = {
@@ -81,7 +81,7 @@ const FloatingNotification = ({ data, updateNotificationStatus }) => {
                     }`}>
                     <p>
                         <span className="font-bold mr-1">
-                            {['adicionado', 'removido'].includes(tipo) ? 'Você' : acaoExtensao.coordenador}
+                            {['adicionado', 'removido', 'criado'].includes(tipo) ? 'Você' : 'Sua'}
                         </span>
                         {mensagem[tipo]}
                     </p>
