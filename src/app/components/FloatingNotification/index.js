@@ -17,14 +17,18 @@ const FloatingNotification = ({ data, updateNotificationStatus }) => {
         adicionado: `virou membro ${acaoExtensao.tipo !== 'serviço' ? 'do ' + acaoExtensao.tipo : 'da ' + acaoExtensao.tipo}: ${acaoExtensao.nome}.`,
         removido: `foi removido ${acaoExtensao.tipo !== 'serviço' ? 'do ' + acaoExtensao.tipo : 'da ' + acaoExtensao.tipo}: ${acaoExtensao.nome}.`,
         criado: `tem uma nova atividade: "${atividade ? atividade.nome : ''}".`,
+        retirado: `foi removido da atividade: "${atividade ? atividade.nome : ''}".`,
         finalizado: `atividade: "${atividade ? atividade.nome : ''}" foi atualizada para ${atividade ? atividade.status : ''}.`,
+        deletado: `atividade: "${atividade ? atividade.nome : ''}" foi deletada.`,
     };
 
     const icon = {
         adicionado: <i className="fa-solid fa-user-plus"></i>,
         removido: <i className="fa-solid fa-user-xmark"></i>,
         criado: <i className="fa-solid fa-square-plus"></i>,
+        retirado: <i className="fa-solid fa-square-minus"></i>,
         finalizado: <i className="fa-solid fa-square-check"></i>,
+        deletado: <i className="fa-solid fa-trash"></i>,
     }
 
     const handleStatusChange = async () => {
@@ -81,7 +85,7 @@ const FloatingNotification = ({ data, updateNotificationStatus }) => {
                     }`}>
                     <p>
                         <span className="font-bold mr-1">
-                            {['adicionado', 'removido', 'criado'].includes(tipo) ? 'Você' : 'Sua'}
+                            {['adicionado', 'removido', 'criado', 'retirado'].includes(tipo) ? 'Você' : 'Sua'}
                         </span>
                         {mensagem[tipo]}
                     </p>
