@@ -171,10 +171,12 @@ const Activities = () => {
     return (
         <div className='w-full h-full bg-black'>
             <div className="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {atividades.length > 0 ? (
-                    atividades.map((atividade) => (
-                        <TaskCard key={atividade.id} task={atividade} />
-                    ))
+                {atividades.filter((atividade) => atividade.status !== 'deletada').length > 0 ? (
+                    atividades
+                        .filter((atividade) => atividade.status !== 'deletada')
+                        .map((atividade) => (
+                            <TaskCard key={atividade.id} task={atividade} />
+                        ))
                 ) : (
                     <div className="col-span-full flex justify-center items-center h-full">
                         <span className="text-3xl text-white bg-gray-700 p-6 rounded-md font-semibold">
