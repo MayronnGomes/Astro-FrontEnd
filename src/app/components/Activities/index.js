@@ -103,6 +103,11 @@ const Activities = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status)) {
+            const confirm = window.confirm(`Ao marcar o status da atividade como: "${newActivity.status}" você não poderá mais editá-la. Deseja prosseguir?`);
+            if (!confirm) return;
+        }
+
         const activityWithAcaoId = {
             ...newActivity,
             acaoId: acaoId,
@@ -276,6 +281,9 @@ const Activities = () => {
                                     >
                                         <option value="aberta">Aberta</option>
                                         <option value="em andamento">Em andamento</option>
+                                        <option value="encerrada com antecipação">Encerrada com Antecipação</option>
+                                        <option value="encerrada com pendência">Encerrada com Pendência</option>
+                                        <option value="cancelada">Cancelada</option>
                                         <option value="concluida">Concluída</option>
                                     </select>
                                 </div>

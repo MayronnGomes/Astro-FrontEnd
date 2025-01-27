@@ -93,6 +93,11 @@ const TaskCard = ({ task }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status)) {
+            const confirm = window.confirm(`Ao marcar o status da atividade como: "${newActivity.status}" você não poderá mais editá-la. Deseja prosseguir?`);
+            if (!confirm) return;
+        }
+
         const activityWithAcaoId = {
             ...newActivity,
             id: id,
@@ -112,16 +117,6 @@ const TaskCard = ({ task }) => {
             if (response.ok) {
                 Toast('success', 'Atividade atualizada com sucesso!');
                 setIsEditing(false);
-                setNewActivity({
-                    nome: nome,
-                    descricao: descricao,
-                    tempoDuracao: tempoDuracao,
-                    dataInicio: dataInicio,
-                    dataFim: dataFim,
-                    local: local,
-                    status: status,
-                    membros: membros,
-                });
                 setselectedMembrosAntigos(selectedMembros)
             } else {
                 Toast('error', 'Erro ao atualizar atividade');
@@ -261,7 +256,7 @@ const TaskCard = ({ task }) => {
                     </span>
                 </div>
 
-                <div className={`${user?.tipo === 'coordenador' ? '' : 'hidden'}`}>
+                <div className={`${user?.tipo === 'coordenador' && !['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status) ? '' : 'hidden'}`}>
                     <button className="text-white hover:text-blue-600 mr-2"
                         onClick={() => setIsEditing(true)}>
                         <i className="fas fa-edit"></i>
@@ -387,6 +382,9 @@ const TaskCard = ({ task }) => {
                                     >
                                         <option value="aberta">Aberta</option>
                                         <option value="em andamento">Em andamento</option>
+                                        <option value="encerrada com antecipação">Encerrada com Antecipação</option>
+                                        <option value="encerrada com pendência">Encerrada com Pendência</option>
+                                        <option value="cancelada">Cancelada</option>
                                         <option value="concluida">Concluída</option>
                                     </select>
                                 </div>
@@ -553,7 +551,7 @@ const TaskCard = ({ task }) => {
                                     <h3 className="text-lg font-medium mb-2 text-gray-600">
                                         Histórico de Comentários:
                                     </h3>
-                                    <div className="mb-4 max-h-80 overflow-y-auto p-2 bg-gray-300 rounded-lg">
+                                    <div className={`mb-4 ${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status) ? 'max-h-80' : 'max-h-[550px]'} overflow-y-auto p-2 bg-gray-300 rounded-lg`}>
 
                                         {
                                             mensagens.length > 0 ? (
@@ -603,14 +601,14 @@ const TaskCard = ({ task }) => {
                                             ) : (
                                                 <div className="flex justify-center p-5">
                                                     <p className="text-gray-500">
-                                                        Ainda não há mensagens nesta atividade
+                                                        Não há mensagens nesta atividade
                                                     </p>
                                                 </div>
                                             )
                                         }
 
                                     </div>
-                                    <div className="mb-4">
+                                    <div className={`mb-4 ${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status) ? '' : 'hidden'}`}>
                                         <label className="block text-gray-600 font-medium">
                                             Adicionar Comentário:
                                         </label>
