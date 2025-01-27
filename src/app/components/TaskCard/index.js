@@ -486,7 +486,6 @@ const TaskCard = ({ task }) => {
                                             {selectedMembros.map((responsavel) => {
                                                 const membro = membros.find((user) => user.id === responsavel);
                                                 if (membro) {
-                                                    console.log(membro.id, membro.nome);
                                                     return membro.nome;
                                                 }
                                                 return null;
@@ -552,7 +551,6 @@ const TaskCard = ({ task }) => {
                                         Histórico de Comentários:
                                     </h3>
                                     <div className={`mb-4 ${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status) ? 'max-h-80' : 'max-h-[550px]'} overflow-y-auto p-2 bg-gray-300 rounded-lg`}>
-
                                         {
                                             mensagens.length > 0 ? (
                                                 mensagens.map((msg) => {
@@ -584,7 +582,7 @@ const TaskCard = ({ task }) => {
                                                                     className="w-10 h-10 rounded-full mr-3"
                                                                     src="https://placehold.co/40x40" />
                                                                 <div className='max-w-xs bg-white text-gray-800 p-4 rounded-lg shadow-md'>
-                                                                    <p className="text-gray-700 font-bold mb-1">
+                                                                    <p className={`text-gray-700 font-bold mb-1 ${selectedMembros.includes(msg.usuario.id) ? '' : 'line-through'}`}>
                                                                         {msg.usuario.nome}
                                                                     </p>
                                                                     <p className="text-gray-500">
