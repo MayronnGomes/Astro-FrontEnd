@@ -6,7 +6,6 @@ import { ptBR } from 'date-fns/locale';
 
 const TaskCard = ({ task }) => {
     const searchParams = useSearchParams();
-    const [acaoId, setAcaoId] = useState(null);
     const [msg, setMsg] = useState('');
     const [user, setUser] = useState(null);
     const [currentPriority, setCurrentPriority] = useState(task.prioridade);
@@ -14,8 +13,9 @@ const TaskCard = ({ task }) => {
     const [isOpenTask, setIsOpenTask] = useState(false);
     const [isPriorityMenuOpen, setIsPriorityMenuOpen] = useState(false);
     const [filter, setFilter] = useState('');
-
-    const { nome, id, descricao, tempoDuracao, dataInicio, dataFim, local, status, usuarios, membrosantigos, msgs } = task;
+    
+    const { nome, id, descricao, tempoDuracao, dataInicio, dataFim, local, status, usuarios, membrosantigos, msgs, acaoExtensaoId } = task;
+    const [acaoId, setAcaoId] = useState(acaoExtensaoId);
 
     const duracaoFormatada = formatDuration(
         {
@@ -53,13 +53,9 @@ const TaskCard = ({ task }) => {
     const buttonRef = useRef(null);
 
     useEffect(() => {
-        const storedAcaoId = searchParams.get('acaoId');
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             setUser(JSON.parse(storedUser));
-        }
-        if (storedAcaoId) {
-            setAcaoId(storedAcaoId);
         }
     }, [searchParams]);
 
