@@ -278,6 +278,7 @@ const SideBar = () => {
                             if (confirmation) {
                                 localStorage.removeItem('user');
                                 localStorage.removeItem('token');
+                                localStorage.removeItem('activeItem');
                                 router.push('/Login');
                             }
                         }}

@@ -7,7 +7,7 @@ export const SidebarProvider = ({ children }) => {
 
   const [activeItem, setActiveItem] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('activeItem') || '';
+      return localStorage.getItem('activeItem') || 'Home';
     }
     return '';
   });
