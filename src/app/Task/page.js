@@ -123,7 +123,7 @@ const Task = () => {
                                     ) : (
                                         <div className="col-span-full flex justify-center items-center h-full">
                                             <span className="text-3xl text-white bg-gray-700 p-6 rounded-md font-semibold">
-                                                {user?.tipo === 'coordenador' ? 'Esta Ação não possui atividades' : 'Você não possui atividades nesta ação'}
+                                                {selected === 'Todas' ? 'Você não possui atividades' : `Você não possui atividades ${selected.toLowerCase()}`}
                                             </span>
                                         </div>
                                     )}
