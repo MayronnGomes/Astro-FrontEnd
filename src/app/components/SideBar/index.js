@@ -73,7 +73,7 @@ const SideBar = () => {
             pendingAction(); // Executa a ação pendente
             setPendingAction(null); // Reseta o estado
         }
-    }, [activeItem, pendingAction]);    
+    }, [activeItem, pendingAction]);
 
     const toggleExpansion = (id) => {
         setExpandedItems((prev) => {
@@ -118,7 +118,10 @@ const SideBar = () => {
 
         const processarAcoes = (lista) => {
             lista.forEach((acao) => {
-                if (acao.tipo === tipo) {
+                if (
+                    acao.tipo === tipo ||
+                    (tipo === 'curso' && (acao.tipo === 'evento' || acao.tipo === 'serviço'))
+                ) {
                     resultado.push(acao);
                 }
                 if (acao.filhos?.length > 0) {
@@ -198,26 +201,26 @@ const SideBar = () => {
                     <ul>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Home' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => { setExpandedItems({});  handleClick('Home', () => navigateTo('/Home')) }}>
+                                onClick={() => { setExpandedItems({}); handleClick('Home', () => navigateTo('/Home')) }}>
                                 <i className="fas fa-home mr-3"></i> Início
                             </a>
                         </li>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Task' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => { setExpandedItems({});  handleClick('Task', () => navigateTo('/Task')) }}>
+                                onClick={() => { setExpandedItems({}); handleClick('Task', () => navigateTo('/Task')) }}>
                                 <i className="fas fa-tasks mr-3"></i> Atividades
                                 <span className="ml-auto bg-blue-600 text-white text-xs rounded-full px-2 py-1">12</span>
                             </a>
                         </li>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Activity' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => { setExpandedItems({});  handleClick('Activity', () => navigateTo('/Activity')) }}>
+                                onClick={() => { setExpandedItems({}); handleClick('Activity', () => navigateTo('/Activity')) }}>
                                 <i className="fas fa-chart-line mr-3"></i> Relatório de Atividades
                             </a>
                         </li>
                         <li className="mb-2">
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Notifications' ? 'border-l-4 border-blue-600' : ''}`}
-                                onClick={() => { setExpandedItems({});  handleClick('Notifications', () => navigateTo('/Notifications')) }}>
+                                onClick={() => { setExpandedItems({}); handleClick('Notifications', () => navigateTo('/Notifications')) }}>
                                 <i className="fas fa-bell mr-3"></i> Notificações
                             </a>
                         </li>
