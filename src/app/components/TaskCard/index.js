@@ -252,7 +252,7 @@ const TaskCard = ({ task }) => {
                     </span>
                 </div>
 
-                <div className={`${user?.tipo === 'coordenador' && !['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status) ? '' : 'hidden'}`}>
+                <div className={`${user?.tipo === 'coordenador' && !['encerrada com antecipação', 'encerrada com pendência', 'cancelada', 'deletada'].includes(newActivity.status) ? '' : 'hidden'}`}>
                     <button className="text-white hover:text-blue-600 mr-2"
                         onClick={() => setIsEditing(true)}>
                         <i className="fas fa-edit"></i>
