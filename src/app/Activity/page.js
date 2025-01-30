@@ -29,11 +29,15 @@ const Activity = () => {
         setSelectedYear(currentYear);
     }, [router]);
 
+    const handleSelectAcao = (acao) => {
+        localStorage.setItem("acaoSelecionada", JSON.stringify(acao));  // Apenas armazena
+    };
+
     return (
         <SidebarProvider>
             <div className='flex h-screen'>
 
-                <SideBar />
+                <SideBar onAcoesExtensaoChange={handleSelectAcao} />
                 <div className="flex-1 relative flex flex-col">
                     <nav className="bg-gray-800 p-4 flex justify-between items-center">
                         <div className="text-xl font-bold">Relatórios de Atividades</div>
