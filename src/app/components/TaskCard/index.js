@@ -13,7 +13,7 @@ const TaskCard = ({ task }) => {
     const [isOpenTask, setIsOpenTask] = useState(false);
     const [isPriorityMenuOpen, setIsPriorityMenuOpen] = useState(false);
     const [filter, setFilter] = useState('');
-    
+
     const { nome, id, descricao, tempoDuracao, dataInicio, dataFim, local, status, usuarios, membrosantigos, msgs, acaoExtensaoId } = task;
     const [acaoId, setAcaoId] = useState(acaoExtensaoId);
 
@@ -29,7 +29,9 @@ const TaskCard = ({ task }) => {
     );
 
     const [membros, setMembros] = useState(usuarios);
+    const allUsers = usuarios.map((user) => { return user.id })
     const [mensagens, setMensagens] = useState(msgs.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)));
+    const [mensagensExibidas, setMensagensExibidas] = useState(mensagens);
     const [selectedMembrosAntigos, setselectedMembrosAntigos] = useState(membrosantigos);
     const [selectedMembros, setSelectedMembros] = useState(selectedMembrosAntigos);
     const [newActivity, setNewActivity] = useState({
@@ -214,11 +216,23 @@ const TaskCard = ({ task }) => {
             });
 
             const data = await response.json();
-            console.log(data)
 
             if (response.ok) {
                 Toast('success', 'Mensagem criada com sucesso!');
                 setMensagens((prevMensagens) => {
+                    const novasMensagens = [
+                        ...prevMensagens,
+                        {
+                            id: data.novaMensagem.id,
+                            usuario: data.novaMensagem.usuario,
+                            comentario: data.novaMensagem.comentario,
+                            createdAt: data.novaMensagem.createdAt,
+                        }
+                    ];
+
+                    return novasMensagens.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                });
+                setMensagensExibidas((prevMensagens) => {
                     const novasMensagens = [
                         ...prevMensagens,
                         {
@@ -240,6 +254,36 @@ const TaskCard = ({ task }) => {
         }
     }
 
+    const handleExcluidoEm = async (e) => {
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/excluidoEm`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: user?.id,
+                    atividadeId: id,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                let excluido = new Date(new Date(data.excluidoEm).getTime() - 3 * 60 * 60 * 1000)
+                allUsers.includes(user?.id)
+                    ? setMensagensExibidas(mensagens)
+                    : setMensagensExibidas(mensagens
+                        .filter(mensagem =>
+                            new Date(mensagem.createdAt) <= excluido
+                        ))
+            }
+        } catch (error) {
+            console.error("Erro ao atualizar atividade:", error);
+        }
+    };
+
     return (
         <div className="bg-gray-700 rounded-lg shadow-md">
             <img
@@ -248,7 +292,7 @@ const TaskCard = ({ task }) => {
                 height="200"
                 src="https://storage.googleapis.com/a1aa/image/96vI10aIaXa1PlUfeTloOnpf5ZuWII7urnr81s4piFynU4znA.jpg"
                 width="300"
-                onClick={() => setIsOpenTask(true)} />
+                onClick={() => { handleExcluidoEm(); setIsOpenTask(true); }} />
             <div className='px-4'>
                 <div className='mb-1'>
                     <h2 className="text-xl font-bold mb-1 truncate">{nome}</h2>
@@ -557,8 +601,8 @@ const TaskCard = ({ task }) => {
                                     </h3>
                                     <div className={`mb-4 ${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status) ? 'max-h-80' : 'max-h-[550px]'} overflow-y-auto p-2 bg-gray-300 rounded-lg`}>
                                         {
-                                            mensagens.length > 0 ? (
-                                                mensagens.map((msg) => {
+                                            mensagensExibidas.length > 0 ? (
+                                                mensagensExibidas.map((msg) => {
                                                     if (msg.usuario.id === user.id) {
                                                         return (
                                                             <div className="flex mb-3 justify-end" key={msg.id}>
@@ -587,7 +631,7 @@ const TaskCard = ({ task }) => {
                                                                     className="w-10 h-10 rounded-full mr-3"
                                                                     src="https://placehold.co/40x40" />
                                                                 <div className='max-w-xs bg-white text-gray-800 p-4 rounded-lg shadow-md'>
-                                                                    <p className={`text-gray-700 font-bold mb-1 ${selectedMembros.includes(msg.usuario.id) ? '' : 'line-through'}`}>
+                                                                    <p className={`text-gray-700 font-bold mb-1 ${allUsers.includes(msg.usuario.id) ? '' : 'line-through'}`}>
                                                                         {msg.usuario.nome}
                                                                     </p>
                                                                     <p className="text-gray-500">
@@ -611,7 +655,7 @@ const TaskCard = ({ task }) => {
                                         }
 
                                     </div>
-                                    <div className={`mb-4 ${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status) ? '' : 'hidden'}`}>
+                                    <div className={`mb-4 ${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status) && allUsers.includes(user?.id) ? '' : 'hidden'}`}>
                                         <label className="block text-gray-600 font-medium">
                                             Adicionar Comentário:
                                         </label>
