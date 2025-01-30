@@ -64,17 +64,21 @@ const Task = () => {
 
     const filteredActivities = atividades.filter((atividade) => {
         if (selected === 'Todas') return true;
-        if (selected === 'Pendentes') return ['aberta', 'em anadamento'].includes(atividade.status);
+        if (selected === 'Pendentes') return ['aberta', 'em andamento'].includes(atividade.status);
         if (selected === 'Concluídas') return ['cancelada', 'encerrada com antecipação', 'encerrada com pendência'].includes(atividade.status);
         if (selected === 'Deletadas') return atividade.status === 'deletada';
         return false;
     });
 
+    const handleSelectAcao = (acao) => {
+        localStorage.setItem("acaoSelecionada", JSON.stringify(acao));  // Apenas armazena
+    };
+
     return (
         <SidebarProvider>
             <div className='flex h-screen bg-black'>
 
-                <SideBar />
+                <SideBar onAcoesExtensaoChange={handleSelectAcao} />
                 <div className="flex-1 relative flex flex-col">
                     <nav className="bg-gray-800 p-4 flex justify-between items-center">
                         <button className="md:hidden text-white" id="menu-button">
