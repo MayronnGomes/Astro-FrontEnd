@@ -112,6 +112,7 @@ const Activities = () => {
             ...newActivity,
             acaoId: acaoId,
             membros: selectedMembros,
+            userSender: user.nome,
         };
 
         try {

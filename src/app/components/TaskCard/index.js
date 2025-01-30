@@ -99,6 +99,7 @@ const TaskCard = ({ task }) => {
             id: id,
             id_acao: acaoId,
             membros: selectedMembros,
+            userSender: user.nome,
         };
 
         try {
@@ -158,16 +159,24 @@ const TaskCard = ({ task }) => {
         );
     };
 
-    const handleDelete = async (id, acaoId) => {
+    const handleDelete = async (id, acaoId, userSender) => {
         const confirm = window.confirm('Tem certeza que deseja deletar esta atividade?');
         if (!confirm) return;
 
+        console.log(id, acaoId, userSender)
+
         try {
-            const response = await fetch(`http://localhost:8080/api/atividade/${id}${acaoId}`, {
+            const response = await fetch(`http://localhost:8080/api/atividade`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                    id: id,
+                    acaoId: acaoId,
+                    userSender: userSender,
+                }),
+
             });
 
             if (response.ok) {
@@ -258,7 +267,7 @@ const TaskCard = ({ task }) => {
                         <i className="fas fa-edit"></i>
                     </button>
                     <button className="text-white hover:text-red-600"
-                        onClick={() => handleDelete(id, acaoId)}>
+                        onClick={() => handleDelete(id, acaoId, user.nome)}>
                         <i className="fas fa-trash">
                         </i>
                     </button>

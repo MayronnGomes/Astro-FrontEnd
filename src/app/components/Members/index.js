@@ -52,11 +52,16 @@ const Members = () => {
 
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8080/api/membros/${id}${acaoId}`, {
+            const response = await fetch(`http://localhost:8080/api/membros`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                    id: id,
+                    acaoId: acaoId,
+                    userSender: user.nome,
+                }),
             });
 
             const data = await response.json()
