@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Toast } from '../Toast';
 import { useSidebar } from '@/app/contexts/SideBarContext';
 
-const SideBar = () => {
+const SideBar = ({ onAcoesExtensaoChange  }) => {
     const router = useRouter();
     const { activeItem, setActiveItem } = useSidebar();
     const [pendingAction, setPendingAction] = useState(null);
@@ -43,6 +43,7 @@ const SideBar = () => {
             });
 
             const data = await response.json();
+            console.log(data.acoesExtensao);
 
             if (response.ok) {
                 setAcoesExtensao(data.acoesExtensao);
@@ -151,6 +152,7 @@ const SideBar = () => {
                             className={`flex items-center p-2 rounded bg-gray-800 cursor-pointer hover:bg-gray-700`}
                             onClick={(e) => {
                                 e.stopPropagation();
+                                onAcoesExtensaoChange(acao);
                                 router.push(`/Dashboard?acaoId=${acao.id}`);
                             }}
                         >
@@ -282,6 +284,8 @@ const SideBar = () => {
                                 localStorage.removeItem('user');
                                 localStorage.removeItem('token');
                                 localStorage.removeItem('activeItem');
+                                localStorage.removeItem('acaoSelecionada');
+                                localStorage.removeItem('acaoId');
                                 router.push('/Login');
                             }
                         }}

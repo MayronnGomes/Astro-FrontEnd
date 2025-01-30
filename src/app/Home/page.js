@@ -60,7 +60,6 @@ const Home = () => {
             });
 
             const data = await response.json();
-            console.log(data)
 
             if (response.ok) {
                 setAcoes(data.acoesExtensao);
@@ -77,11 +76,15 @@ const Home = () => {
         }
     }, [user]);
 
+    const handleSelectAcao = (acao) => {
+        localStorage.setItem("acaoSelecionada", JSON.stringify(acao));  // Apenas armazena
+    };
+
     return (
         <SidebarProvider>
             <div className='flex h-screen'>
 
-                <SideBar />
+                <SideBar onAcoesExtensaoChange={handleSelectAcao} />
                 <div className="flex-1 p-8 max-h-screen overflow-y-auto">
                     <section className="mb-8">
                         <h2 className="text-3xl font-bold mb-4">
@@ -133,6 +136,7 @@ const Home = () => {
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             localStorage.setItem('activeItem', acao.tipo);
+                                            localStorage.setItem("acaoSelecionada", JSON.stringify(acao));
                                             router.push(`/Dashboard?acaoId=${acao.id}`);
                                         }}
                                     >
