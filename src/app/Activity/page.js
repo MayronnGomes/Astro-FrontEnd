@@ -3,13 +3,20 @@
 import React, { useEffect, useState } from 'react';
 import SideBar from '../components/SideBar';
 import { SidebarProvider } from '../contexts/SideBarContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import TarefasPorStatusPizza from '../components/TarefasPorStatusPizza/TarefasPorStatusPizza';
+import AtividadesPorDia from '../components/AtividadesPorDia/AtividadesPorDia';
+import TarefasPorStatusAgrupado from '../components/TarefasPorStatusAgrupado/TarefasPorStatusAgrupado';
+import AtividadesPorPrioridade from '../components/AtividadesPorPrioridade/AtividadesPorPrioridade';
 
 const Activity = () => {
     const router = useRouter();
     const [years, setYears] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
+    const [atividades, setAtividades] = useState([]);
+    const searchParams = useSearchParams();
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -29,6 +36,39 @@ const Activity = () => {
         setSelectedYear(currentYear);
     }, [router]);
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, [searchParams]);
+
+    async function getAtividades(userId) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/atividadesTodas/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+            console.log(data.atividades)
+
+            if (response.ok) {
+                setAtividades(data.atividades);
+            }
+        } catch (error) {
+            console.error("Erro ao buscar atividades:", error);
+        }
+    }
+
+    useEffect(() => {
+        if (user && user.id) {
+            getAtividades(user.id);
+        }
+    }, [user]);
+
     const handleSelectAcao = (acao) => {
         localStorage.setItem("acaoSelecionada", JSON.stringify(acao));  // Apenas armazena
     };
@@ -42,7 +82,7 @@ const Activity = () => {
                     <nav className="bg-gray-800 p-4 flex justify-between items-center">
                         <div className="text-xl font-bold">Relatórios de Atividades</div>
                     </nav>
-                    <div className='p-4'>
+                    <div className='p-4 overflow-y-auto'>
                         <p className="text-lg mb-8">
                             Acompanhe seu progresso e veja relatórios detalhados sobre sua produtividade.
                         </p>
@@ -57,7 +97,8 @@ const Activity = () => {
                                     name="month"
                                     value={selectedMonth}
                                     onChange={(e) => setSelectedMonth(e.target.value)}
-                                >                                    <option value="janeiro">Janeiro</option>
+                                >
+                                    <option value="janeiro">Janeiro</option>
                                     <option value="fevereiro">Fevereiro</option>
                                     <option value="marco">Março</option>
                                     <option value="abril">Abril</option>
@@ -98,22 +139,32 @@ const Activity = () => {
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-gray-600">
                                 <div className="bg-white p-4 rounded-lg shadow-lg">
-                                    <h4 className="text-lg font-bold mb-2">
-                                        Tarefas Concluídas
-                                    </h4>
-                                    <img alt="Gráfico de barras mostrando o número de tarefas concluídas durante o mês" className="w-full" src="https://placehold.co/300x200" />
+                                    <TarefasPorStatusPizza
+                                        atividades={atividades}
+                                        selectedMonth={selectedMonth}
+                                        selectedYear={selectedYear}
+                                    />
+                                </div>
+                                <div className="bg-white p-4 rounded-lg shadow-lg lg:col-span-2">
+                                    <AtividadesPorDia
+                                        atividades={atividades}
+                                        selectedMonth={selectedMonth}
+                                        selectedYear={selectedYear}
+                                    />
                                 </div>
                                 <div className="bg-white p-4 rounded-lg shadow-lg">
-                                    <h4 className="text-lg font-bold mb-2">
-                                        Tempo Gasto em Projetos
-                                    </h4>
-                                    <img alt="Gráfico de pizza mostrando a distribuição do tempo gasto em diferentes projetos durante o mês" className="w-full" src="https://placehold.co/300x200" />
+                                    <AtividadesPorPrioridade
+                                        atividades={atividades}
+                                        selectedMonth={selectedMonth}
+                                        selectedYear={selectedYear}
+                                    />
                                 </div>
-                                <div className="bg-white p-4 rounded-lg shadow-lg">
-                                    <h4 className="text-lg font-bold mb-2">
-                                        Tarefas Pendentes
-                                    </h4>
-                                    <img alt="Gráfico de linha mostrando o número de tarefas pendentes ao longo do mês" className="w-full" src="https://placehold.co/300x200" />
+                                <div className="bg-white p-4 rounded-lg shadow-lg lg:col-span-2">
+                                    <TarefasPorStatusAgrupado
+                                        atividades={atividades}
+                                        selectedMonth={selectedMonth}
+                                        selectedYear={selectedYear}
+                                    />
                                 </div>
                             </div>
 
