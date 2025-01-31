@@ -65,7 +65,7 @@ const Task = () => {
     const filteredActivities = atividades.filter((atividade) => {
         if (selected === 'Todas') return true;
         if (selected === 'Pendentes') return ['aberta', 'em andamento'].includes(atividade.status);
-        if (selected === 'Concluídas') return ['cancelada', 'encerrada com antecipação', 'encerrada com pendência'].includes(atividade.status);
+        if (selected === 'Concluídas') return ['cancelada', 'encerrada com antecipação', 'encerrada com pendência', 'concluida'].includes(atividade.status);
         if (selected === 'Deletadas') return atividade.status === 'deletada';
         return false;
     });
