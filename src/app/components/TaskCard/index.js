@@ -305,7 +305,7 @@ const TaskCard = ({ task }) => {
                     </span>
                 </div>
 
-                <div className={`${user?.tipo === 'coordenador' && !['encerrada com antecipação', 'encerrada com pendência', 'cancelada', 'deletada'].includes(newActivity.status) ? '' : 'hidden'}`}>
+                <div className={`${user?.tipo === 'coordenador' && !['encerrada com antecipação', 'encerrada com pendência', 'cancelada', 'deletada', 'concluida'].includes(newActivity.status) ? '' : 'hidden'}`}>
                     <button className="text-white hover:text-blue-600 mr-2"
                         onClick={() => setIsEditing(true)}>
                         <i className="fas fa-edit"></i>
@@ -599,7 +599,7 @@ const TaskCard = ({ task }) => {
                                     <h3 className="text-lg font-medium mb-2 text-gray-600">
                                         Histórico de Comentários:
                                     </h3>
-                                    <div className={`mb-4 ${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status) ? 'max-h-80' : 'max-h-[550px]'} overflow-y-auto p-2 bg-gray-300 rounded-lg`}>
+                                    <div className={`mb-4 ${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada', 'concluida'].includes(newActivity.status) ? 'max-h-80' : 'max-h-[550px]'} overflow-y-auto p-2 bg-gray-300 rounded-lg`}>
                                         {
                                             mensagensExibidas.length > 0 ? (
                                                 mensagensExibidas.map((msg) => {
@@ -655,7 +655,7 @@ const TaskCard = ({ task }) => {
                                         }
 
                                     </div>
-                                    <div className={`mb-4 ${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada'].includes(newActivity.status) && allUsers.includes(user?.id) ? '' : 'hidden'}`}>
+                                    <div className={`mb-4 ${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada', 'concluida'].includes(newActivity.status) && allUsers.includes(user?.id) ? '' : 'hidden'}`}>
                                         <label className="block text-gray-600 font-medium">
                                             Adicionar Comentário:
                                         </label>
