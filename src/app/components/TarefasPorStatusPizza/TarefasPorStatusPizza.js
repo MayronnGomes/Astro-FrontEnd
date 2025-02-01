@@ -4,7 +4,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const TarefasPorStatusPizza = ({ atividades, selectedMonth, selectedYear }) => {
-
   const monthNames = [
     'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
     'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
@@ -14,9 +13,7 @@ const TarefasPorStatusPizza = ({ atividades, selectedMonth, selectedYear }) => {
 
   const atividadesDoMes = atividades.filter((atividade) => {
     const dataInicio = new Date(atividade.dataInicio);
-    const atividadeMonth = dataInicio.getMonth();
-    const atividadeYear = dataInicio.getFullYear();
-    return atividadeMonth === monthIndex && atividadeYear === parseInt(selectedYear);
+    return dataInicio.getMonth() === monthIndex && dataInicio.getFullYear() === parseInt(selectedYear);
   });
 
   if (atividadesDoMes.length === 0) {
@@ -31,44 +28,46 @@ const TarefasPorStatusPizza = ({ atividades, selectedMonth, selectedYear }) => {
   // Agrupando as atividades por status
   const statusActivities = atividadesDoMes.reduce((acc, atividade) => {
     const { status, nome } = atividade;
-    if (!acc[status]) {
-      acc[status] = [];
-    }
-    acc[status].push(nome); // Adicionando nome da atividade no status correspondente
+    if (!acc[status]) acc[status] = [];
+    acc[status].push(nome);
     return acc;
   }, {});
 
-  // Preparando os dados para o gráfico de pizza
-  const labels = Object.keys(statusActivities); // Status das atividades
-  const dataValues = Object.values(statusActivities).map((atividades) => atividades.length); // Quantidade de tarefas por status
-  const backgroundColor = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40', '#C3E6CB']; // Cores para as fatias
-  const hoverBackgroundColor = ['#FF4567', '#37A6DB', '#FFCE76', '#4BC0C1', '#FFB174', '#9FDEB4']; // Cores ao passar o mouse
+  const totalAtividades = atividadesDoMes.length;
 
-  // Função para exibir os nomes das atividades no tooltip
-  const tooltipCallbacks = {
-    label: function (context) {
-      const status = context.label;
-      const atividadesNomes = statusActivities[status].join(', '); // Juntando os nomes das atividades com o mesmo status
-      return `${context.raw} Tarefas - Atividades: ${atividadesNomes}`;
-    },
-  };
+  // Preparando os dados para o gráfico de pizza
+  const labels = Object.keys(statusActivities);
+  const dataValues = Object.values(statusActivities).map((atividades) => atividades.length);
+  const backgroundColor = ['#F87171', '#36A2EB', '#22C55E', '#EF4444', '#86EFAC', '#FFCE56'];
+  const hoverBackgroundColor = ['#F87171', '#37A6DB', '#16A34A', '#DC2626', '#4ADE80', '#EAB308'];
 
   const data = {
-    labels, // Status das atividades
+    labels,
     datasets: [
       {
-        data: dataValues, // Quantidade de tarefas por status
-        backgroundColor, // Cores para as fatias
-        hoverBackgroundColor, // Cores ao passar o mouse
+        data: dataValues,
+        backgroundColor,
+        hoverBackgroundColor,
+        atividades: Object.values(statusActivities),
       },
     ],
   };
 
+  // Customizando o tooltip para exibir a porcentagem
   const options = {
     responsive: true,
     plugins: {
       tooltip: {
-        callbacks: tooltipCallbacks, // Customizando o tooltip
+        callbacks: {
+          label: function (context) {
+            const count = context.raw; // Quantidade de tarefas
+            const percentage = ((count / totalAtividades) * 100).toFixed(2); // Calcula a porcentagem
+            const status = context.label;
+            const atividadesNomes = statusActivities[status].join(', '); // Nomes das atividades
+
+            return `${count} Tarefas (${percentage}%)\nAtividades: ${atividadesNomes}`;
+          },
+        },
       },
     },
   };

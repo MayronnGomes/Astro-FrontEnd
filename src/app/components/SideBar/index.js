@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Toast } from '../Toast';
 import { useSidebar } from '@/app/contexts/SideBarContext';
+import Image from "next/image";
 
-const SideBar = ({ onAcoesExtensaoChange  }) => {
+const SideBar = ({ onAcoesExtensaoChange }) => {
     const router = useRouter();
     const { activeItem, setActiveItem } = useSidebar();
     const [pendingAction, setPendingAction] = useState(null);
@@ -186,9 +187,14 @@ const SideBar = ({ onAcoesExtensaoChange  }) => {
             <div
                 className={`min-h-screen flex-col bg-gray-900 text-white p-4 shadow-[8px_0_10px_rgba(0,0,0,0.8)]`}
             >
-                <div className="flex items-center mb-8 border-b border-gray-700 pb-4">
-                    <img alt="Logo" className="w-8 h-8 mr-2" height="32" src="https://storage.googleapis.com/a1aa/image/5vuz4T3qMe3aNCifaPGbBvuEkGlYZvMO7rI9flq6TBo4k4znA.jpg" width="32" />
-                    <span className="text-xl font-semibold">Logoipsum</span>
+                <div className="flex items-center justify-center mb-8 border-b border-gray-700 pb-4">
+                    <Image
+                        src="/images/logo_astro_branca.png"
+                        alt="ASTRO"
+                        width={150}
+                        height={50}
+                        className="rounded"
+                    />
                 </div>
                 <div className="flex items-center mb-6 border-b border-gray-700 pb-4">
                     <img alt="User Avatar" className="w-10 h-10 rounded-full mr-3" height="40" src="https://storage.googleapis.com/a1aa/image/VkfyeN7xGTieHoe7l2wY3S7Vme4SEJ8ofByveRyBHqKqOJe5TA.jpg" width="40" />
@@ -211,7 +217,6 @@ const SideBar = ({ onAcoesExtensaoChange  }) => {
                             <a className={`flex items-center p-2 rounded bg-gray-800 hover:bg-gray-700 cursor-pointer ${activeItem === 'Task' ? 'border-l-4 border-blue-600' : ''}`}
                                 onClick={() => { setExpandedItems({}); handleClick('Task', () => navigateTo('/Task')) }}>
                                 <i className="fas fa-tasks mr-3"></i> Atividades
-                                <span className="ml-auto bg-blue-600 text-white text-xs rounded-full px-2 py-1">12</span>
                             </a>
                         </li>
                         <li className="mb-2">

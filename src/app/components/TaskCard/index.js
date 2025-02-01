@@ -290,7 +290,7 @@ const TaskCard = ({ task }) => {
                 alt={`Placeholder image for ${nome}`}
                 className="w-full h-32 object-cover rounded-md mb-4 cursor-pointer"
                 height="200"
-                src="https://storage.googleapis.com/a1aa/image/96vI10aIaXa1PlUfeTloOnpf5ZuWII7urnr81s4piFynU4znA.jpg"
+                src="/images/LOGO.png"
                 width="300"
                 onClick={() => { handleExcluidoEm(); setIsOpenTask(true); }} />
             <div className='px-4'>
