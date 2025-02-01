@@ -37,14 +37,16 @@ const AtividadesPorPrioridade = ({ atividades, selectedMonth, selectedYear }) =>
   }, {});
 
   // Dados para o gráfico
+  const totalAtividades = atividadesDoMes.length; // Total de atividades no mês
+
   const data = {
-    labels: Object.keys(prioridadeCount), // Prioridades
+    labels: Object.keys(prioridadeCount),
     datasets: [
       {
-        data: Object.values(prioridadeCount).map((atividades) => atividades.length), // Quantidade de tarefas por prioridade
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'], // Cores para as fatias
-        hoverBackgroundColor: ['#FF4567', '#37A6DB', '#FFCE76', '#4BC0C1'], // Cores ao passar o mouse
-        atividades: Object.values(prioridadeCount), // Armazenando as atividades para uso no tooltip
+        data: Object.values(prioridadeCount).map((atividades) => atividades.length),
+        backgroundColor: ['#EF4444', '#22C55E', '#FFCE56', '#9CA3AF'],
+        hoverBackgroundColor: ['#DC2626', '#16A34A', '#EAB308', '#6B7280'],
+        atividades: Object.values(prioridadeCount),
       },
     ],
   };
@@ -55,10 +57,12 @@ const AtividadesPorPrioridade = ({ atividades, selectedMonth, selectedYear }) =>
       tooltip: {
         callbacks: {
           label: function (context) {
-            const prioridade = context.label;
+            const count = context.raw; // Quantidade de tarefas
+            const percentage = ((count / totalAtividades) * 100).toFixed(2); // Calculando a porcentagem
             const atividades = context.dataset.atividades[context.dataIndex];
-            const atividadesNomes = atividades.join('\n'); // Juntando os nomes das atividades
-            return `${context.raw} Tarefas: \n${atividadesNomes}`;
+            const atividadesNomes = atividades.join(', ');
+
+            return `${count} Tarefas (${percentage}%)\n${atividadesNomes}`;
           },
         },
       },

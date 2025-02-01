@@ -19,7 +19,7 @@ const Task = () => {
 
     const searchParams = useSearchParams();
     const [user, setUser] = useState(null);
-    const [selected, setSelected] = useState('Todas');
+    const [selected, setSelected] = useState('Pendentes');
     const [atividades, setAtividades] = useState([]);
 
     useEffect(() => {

@@ -52,7 +52,7 @@ const TarefasPorStatusAgrupado = ({ atividades, selectedMonth, selectedYear }) =
 
     if (atividade.status === 'aberta' || atividade.status === 'em andamento') {
       statusAgrupado = 'pendente';
-    } else if (atividade.status === 'concluída' || atividade.status === 'encerrada com antecipação') {
+    } else if (atividade.status === 'concluida' || atividade.status === 'encerrada com antecipação') {
       statusAgrupado = 'concluida';
     } else if (atividade.status === 'cancelada' || atividade.status === 'encerrada com pendência') {
       statusAgrupado = 'canceladaPendencia';
@@ -80,19 +80,19 @@ const TarefasPorStatusAgrupado = ({ atividades, selectedMonth, selectedYear }) =
       {
         label: 'Pendente',
         data: atividadesPorGrupo.pendente.map((semana) => semana.length),
-        backgroundColor: '#FF5733', // Cor de fundo para tarefas pendentes
+        backgroundColor: '#FFCE56', // Cor de fundo para tarefas pendentes
         atividades: atividadesPorGrupo.pendente,
       },
       {
         label: 'Concluída',
         data: atividadesPorGrupo.concluida.map((semana) => semana.length),
-        backgroundColor: '#33FF57', // Cor de fundo para tarefas concluídas
+        backgroundColor: '#22C55E', // Cor de fundo para tarefas concluídas
         atividades: atividadesPorGrupo.concluida,
       },
       {
         label: 'Cancelada/Pendente',
         data: atividadesPorGrupo.canceladaPendencia.map((semana) => semana.length),
-        backgroundColor: '#FF33A1', // Cor de fundo para tarefas canceladas/pendentes
+        backgroundColor: '#EF4444', // Cor de fundo para tarefas canceladas/pendentes
         atividades: atividadesPorGrupo.canceladaPendencia,
       },
     ],
