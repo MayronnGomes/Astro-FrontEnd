@@ -3,9 +3,12 @@ import { Toast } from '../Toast';
 import { useSearchParams } from 'next/navigation';
 import { format, formatDuration } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useStopwatch } from 'react-timer-hook';
 
 const TaskCard = ({ task }) => {
     const searchParams = useSearchParams();
+    const { seconds, minutes, hours, days, start, pause, reset } = useStopwatch({ autoStart: false });
+    const [isRunning, setIsRunning] = useState(false);
     const [msg, setMsg] = useState('');
     const [user, setUser] = useState(null);
     const [currentPriority, setCurrentPriority] = useState(task.prioridade);
@@ -14,19 +17,31 @@ const TaskCard = ({ task }) => {
     const [isPriorityMenuOpen, setIsPriorityMenuOpen] = useState(false);
     const [filter, setFilter] = useState('');
 
-    const { nome, id, descricao, tempoDuracao, dataInicio, dataFim, local, status, usuarios, membrosantigos, msgs, acaoExtensaoId } = task;
+    const { nome, id, descricao, dataInicio, dataFim, local, status, usuarios, membrosantigos, msgs, acaoExtensaoId } = task;
     const [acaoId, setAcaoId] = useState(acaoExtensaoId);
 
-    const duracaoFormatada = formatDuration(
-        {
-            years: Math.floor(tempoDuracao / (60 * 24 * 365)),
-            months: Math.floor((tempoDuracao % (60 * 24 * 365)) / (60 * 24 * 30)),
-            days: Math.floor((tempoDuracao % (60 * 24 * 30)) / (60 * 24)),
-            hours: Math.floor((tempoDuracao % (60 * 24)) / 60),
-            minutes: tempoDuracao % 60,
-        },
-        { locale: ptBR }
-    );
+    const handleStartPause = () => {
+        if (isRunning) {
+            pause();
+            handleTimeChange();
+        } else {
+            start();
+        }
+        setIsRunning(!isRunning);
+    };
+
+    useEffect(() => {
+        if (user && user.id) {
+            getTime();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (isRunning) {
+            handleTimeChange();
+        }
+    }, [minutes, hours, isRunning])
+
 
     const [membros, setMembros] = useState(usuarios);
     const allUsers = usuarios.map((user) => { return user.id })
@@ -37,7 +52,6 @@ const TaskCard = ({ task }) => {
     const [newActivity, setNewActivity] = useState({
         nome: nome,
         descricao: descricao,
-        tempoDuracao: tempoDuracao,
         dataInicio: dataInicio,
         dataFim: dataFim,
         local: local,
@@ -86,6 +100,45 @@ const TaskCard = ({ task }) => {
             },
             body: JSON.stringify({ "prioridade": newPriority }),
         });
+    };
+
+    const handleTimeChange = async () => {
+        const response = await fetch(`http://localhost:8080/api/atividadeTime`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    "id_user": user.id,
+                    "id_atividade": id,
+                    "tempo_gasto": days * 86400 + hours * 3600 + minutes * 60 + seconds,
+                }),
+        });
+    };
+
+    const getTime = async () => {
+
+        const response = await fetch(`http://localhost:8080/api/getAtividadeTime`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    "id_user": user.id,
+                    "id_atividade": id,
+                }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            const stopwatchOffset = new Date();
+            stopwatchOffset.setSeconds(stopwatchOffset.getSeconds() + data.elapsedTime);  // Adiciona 300 segundos (5 minutos)
+
+            reset(stopwatchOffset, false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -139,7 +192,6 @@ const TaskCard = ({ task }) => {
         setNewActivity({
             nome: nome,
             descricao: descricao,
-            tempoDuracao: tempoDuracao,
             dataInicio: dataInicio,
             dataFim: dataFim,
             local: local,
@@ -377,17 +429,6 @@ const TaskCard = ({ task }) => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-gray-700">Tempo de Duração (em minutos)</label>
-                                    <input
-                                        type="number"
-                                        name="tempoDuracao"
-                                        value={newActivity.tempoDuracao}
-                                        onChange={handleInputChange}
-                                        className="w-full px-4 py-2 border rounded-md text-gray-400"
-                                        required
-                                    />
-                                </div>
-                                <div>
                                     <label className="block text-gray-700">Data de Início</label>
                                     <input
                                         type="datetime-local"
@@ -497,7 +538,7 @@ const TaskCard = ({ task }) => {
             {
                 isOpenTask && (
                     <div
-                    className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 px-4" 
+                        className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 px-4"
                     >
 
                         <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -506,7 +547,7 @@ const TaskCard = ({ task }) => {
                                     Detalhes da Atividade
                                 </h2>
                                 <button className="text-gray-600 hover:text-red-600"
-                                    onClick={() => setIsOpenTask(false)}>
+                                    onClick={() => { setIsRunning(false); pause(); handleTimeChange(); setIsOpenTask(false); }}>
                                     <i className="fas fa-times">
                                     </i>
                                 </button>
@@ -556,11 +597,23 @@ const TaskCard = ({ task }) => {
                                     </div>
                                     <div className="mb-4">
                                         <label className="block text-gray-600 font-medium">
-                                            Tempo de Duração:
+                                            Tempo Gasto na Atividade:
                                         </label>
-                                        <p className="text-gray-400">
-                                            {duracaoFormatada}
-                                        </p>
+                                        <div className="flex items-center gap-3 px-4 py-2 bg-gray-300 rounded-lg shadow-md w-fit">
+                                            <button
+                                                className={`${!['encerrada com antecipação', 'encerrada com pendência', 'cancelada', 'concluida'].includes(newActivity.status) && selectedMembros.includes(user?.id) ? '' : 'hidden'} text-gray-500 hover:text-gray-800 transition-transform transform hover:scale-110`}
+                                                onClick={handleStartPause}
+                                            >
+                                                {isRunning ? (
+                                                    <i className="fa-solid fa-pause"></i>
+                                                ) : (
+                                                    <i className="fa-solid fa-play"></i>
+                                                )}
+                                            </button>
+                                            <p className="text-gray-700 font-medium text-lg tabular-nums">
+                                                {String(days).padStart(2, '0')}:{String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                                            </p>
+                                        </div>
                                     </div>
                                     <div className="mb-4">
                                         <label className="block text-gray-600 font-medium">
