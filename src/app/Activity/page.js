@@ -38,6 +38,10 @@ const Activity = () => {
     }, [router]);
 
     useEffect(() => {
+        document.title = "Relatórios | Astro";
+    }, []);
+
+    useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             setUser(JSON.parse(storedUser));

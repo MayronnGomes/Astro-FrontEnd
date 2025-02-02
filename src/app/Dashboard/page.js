@@ -18,6 +18,10 @@ const Dashboard = () => {
         }
     }, [router]);
 
+    useEffect(() => {
+        document.title = "Ação | Astro";
+    }, []);
+
     const [user, setUser] = useState(null);
     const [selected, setSelected] = useState("Atividades");
     const [acaoSelecionada, setAcaoSelecionada] = useState(null);
