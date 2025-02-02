@@ -1,10 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
+
+  useEffect(() => {
+    document.title = "Apresentação | Astro";
+  }, []);
+
   const router = useRouter();
 
   const goToLogin = () => {

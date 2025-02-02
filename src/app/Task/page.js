@@ -17,6 +17,10 @@ const Task = () => {
         }
     }, [router]);
 
+    useEffect(() => {
+        document.title = "Atividades | Astro";
+    }, []);
+
     const searchParams = useSearchParams();
     const [user, setUser] = useState(null);
     const [selected, setSelected] = useState('Pendentes');
@@ -83,7 +87,7 @@ const Task = () => {
                 <div className={`flex-1 ${isSidebarOpen ? '' : 'relative'} flex flex-col`}>
                     <nav className="bg-gray-800 p-4 flex justify-center md:justify-between items-center">
                         <button className={`md:hidden ${isSidebarOpen ? 'hidden' : ''} absolute left-4 text-white`}
-                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
                             <i className="fas fa-bars"></i>
                         </button>
                         <div className="text-xl font-bold">Atividades</div>

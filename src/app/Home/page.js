@@ -16,6 +16,10 @@ const Home = () => {
         }
     }, [router]);
 
+    useEffect(() => {
+        document.title = "Início | Astro";
+    }, []);
+
     const searchParams = useSearchParams();
     const [user, setUser] = useState(null);
     const [atividades, setAtividades] = useState([]);

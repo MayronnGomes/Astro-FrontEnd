@@ -18,6 +18,10 @@ const Notifications = () => {
         }
     }, [router]);
 
+    useEffect(() => {
+        document.title = "Notificações | Astro";
+    }, []);
+
     const [notificacoes, setNotificacoes] = useState([]);
     const searchParams = useSearchParams();
     const [user, setUser] = useState(null);
