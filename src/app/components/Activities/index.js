@@ -15,7 +15,6 @@ const Activities = ({ isSidebarOpen }) => {
     const [newActivity, setNewActivity] = useState({
         nome: '',
         descricao: '',
-        tempoDuracao: 0,
         dataInicio: '',
         dataFim: '',
         local: '',
@@ -130,7 +129,6 @@ const Activities = ({ isSidebarOpen }) => {
                 setNewActivity({
                     nome: '',
                     descricao: '',
-                    tempoDuracao: 0,
                     dataInicio: '',
                     dataFim: '',
                     local: '',
@@ -152,7 +150,6 @@ const Activities = ({ isSidebarOpen }) => {
         setNewActivity({
             nome: '',
             descricao: '',
-            tempoDuracao: 0,
             dataInicio: '',
             dataFim: '',
             local: '',
@@ -222,17 +219,6 @@ const Activities = ({ isSidebarOpen }) => {
                                     <textarea
                                         name="descricao"
                                         value={newActivity.descricao}
-                                        onChange={handleInputChange}
-                                        className="w-full px-4 py-2 border rounded-md text-gray-400"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700">Tempo de Duração (em minutos)</label>
-                                    <input
-                                        type="number"
-                                        name="tempoDuracao"
-                                        value={newActivity.tempoDuracao}
                                         onChange={handleInputChange}
                                         className="w-full px-4 py-2 border rounded-md text-gray-400"
                                         required
