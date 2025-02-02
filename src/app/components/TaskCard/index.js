@@ -288,7 +288,7 @@ const TaskCard = ({ task }) => {
         <div className="bg-gray-700 rounded-lg shadow-md">
             <img
                 alt={`Placeholder image for ${nome}`}
-                className="w-full h-32 object-cover rounded-md mb-4 cursor-pointer"
+                className="w-full h-auto object-contain rounded-tl-md rounded-tr-md mb-4 cursor-pointer"
                 height="200"
                 src="/images/LOGO.png"
                 width="300"
@@ -351,11 +351,11 @@ const TaskCard = ({ task }) => {
 
             {
                 isEditing && (
-                    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-white p-8 rounded-lg w-96 max-h-[80vh] overflow-y-auto">
+                    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 p-4 sm:p-6">
+                        <div className="bg-white p-6 sm:p-8 rounded-lg w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh] sm:max-h-[80vh] overflow-y-auto">
                             <h2 className="text-xl text-black font-bold mb-4">Atualizar Atividade</h2>
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-4">
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div>
                                     <label className="block text-gray-700">Nome</label>
                                     <input
                                         type="text"
@@ -366,7 +366,7 @@ const TaskCard = ({ task }) => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Descrição</label>
                                     <textarea
                                         name="descricao"
@@ -376,7 +376,7 @@ const TaskCard = ({ task }) => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Tempo de Duração (em minutos)</label>
                                     <input
                                         type="number"
@@ -387,7 +387,7 @@ const TaskCard = ({ task }) => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Data de Início</label>
                                     <input
                                         type="datetime-local"
@@ -398,7 +398,7 @@ const TaskCard = ({ task }) => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Data de Fim</label>
                                     <input
                                         type="datetime-local"
@@ -409,7 +409,7 @@ const TaskCard = ({ task }) => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Local</label>
                                     <input
                                         type="text"
@@ -420,7 +420,7 @@ const TaskCard = ({ task }) => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Status</label>
                                     <select
                                         name="status"
@@ -438,7 +438,7 @@ const TaskCard = ({ task }) => {
                                     </select>
                                 </div>
 
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Responsáveis</label>
 
                                     {/* Campo de busca */}
@@ -496,9 +496,11 @@ const TaskCard = ({ task }) => {
 
             {
                 isOpenTask && (
-                    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+                    <div
+                    className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 px-4" 
+                    >
 
-                        <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl">
+                        <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-2xl font-bold text-gray-600">
                                     Detalhes da Atividade
@@ -595,7 +597,7 @@ const TaskCard = ({ task }) => {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="md:w-1/2 md:pl-4 border-l border-gray-700">
+                                <div className="md:w-1/2 md:pl-4 md:border-l md:pt-0 md:border-t-0 border-t pt-4 border-gray-700">
                                     <h3 className="text-lg font-medium mb-2 text-gray-600">
                                         Histórico de Comentários:
                                     </h3>

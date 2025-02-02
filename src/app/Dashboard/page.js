@@ -55,11 +55,11 @@ const Dashboard = () => {
         { label: "Cadastrar Membros Externos", iconClass: "fa fa-user-plus" },
     ];
 
-    const componentsMap = {
-        "Atividades": <Activities />,
+    const [componentsMap, setcomponentsMap] = useState({
+        "Atividades": <Activities isSidebarOpen={isSidebarOpen} />,
         "Membros": <Members />,
         "Cadastrar Membros Externos": <ExternalMembers />,
-    };
+    });
 
     const SelectedComponent = componentsMap[selected];
 
@@ -77,9 +77,18 @@ const Dashboard = () => {
         return button.label === "Atividades";
     });
 
+    useEffect(() => {
+        console.log('aq')
+        setcomponentsMap({
+            "Atividades": <Activities isSidebarOpen={isSidebarOpen} />,
+            "Membros": <Members />,
+            "Cadastrar Membros Externos": <ExternalMembers />,
+        });
+    }, [isSidebarOpen])
+
     return (
         <SidebarProvider>
-            <div className='flex flex-grow min-h-screen'>
+            <div className='flex flex-grow h-screen'>
 
                 <SideBar onAcoesExtensaoChange={setAcaoSelecionada} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
                 <div className={`flex-1 ${isSidebarOpen ? '' : 'relative'} flex flex-col`}>
@@ -97,7 +106,7 @@ const Dashboard = () => {
                             <p className="text-sm">
                                 {acaoSelecionada.descricao}
                             </p>
-                            <div className="flex space-x-4">
+                            <div className="flex space-x-4 text-center md:text-left">
                                 <span className={`${tipoColors[acaoSelecionada.tipo]} text-xs font-semibold px-2 py-1 rounded-full`}>
                                     {'Tipo: ' + acaoSelecionada.tipo}
                                 </span>
