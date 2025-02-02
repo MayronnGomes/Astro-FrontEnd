@@ -22,6 +22,7 @@ const Notifications = () => {
     const searchParams = useSearchParams();
     const [user, setUser] = useState(null);
     const [selected, setSelected] = useState('Todas');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -95,10 +96,11 @@ const Notifications = () => {
         <SidebarProvider>
             <div className='flex h-screen'>
 
-                <SideBar onAcoesExtensaoChange={handleSelectAcao} />
-                <div className="flex-1 relative flex flex-col">
-                    <nav className="bg-gray-800 p-4 flex justify-between items-center">
-                        <button className="md:hidden text-white" id="menu-button">
+                <SideBar onAcoesExtensaoChange={handleSelectAcao} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                <div className={`flex-1 ${isSidebarOpen ? '' : 'relative'} flex flex-col`}>
+                    <nav className="bg-gray-800 p-4 flex justify-center md:justify-between items-center">
+                        <button className={`md:hidden ${isSidebarOpen ? 'hidden' : ''} absolute left-4 text-white`}
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
                             <i className="fas fa-bars"></i>
                         </button>
                         <div className="text-xl font-bold">Notificações</div>

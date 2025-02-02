@@ -6,7 +6,7 @@ import { Toast } from '../Toast';
 import { useSidebar } from '@/app/contexts/SideBarContext';
 import Image from "next/image";
 
-const SideBar = ({ onAcoesExtensaoChange }) => {
+const SideBar = ({ onAcoesExtensaoChange, isSidebarOpen, setIsSidebarOpen }) => {
     const router = useRouter();
     const { activeItem, setActiveItem } = useSidebar();
     const [pendingAction, setPendingAction] = useState(null);
@@ -183,11 +183,11 @@ const SideBar = ({ onAcoesExtensaoChange }) => {
     };
 
     return (
-        <div className='h-screen overflow-auto max-w-64 min-w-64'>
+        <div className='h-screen overflow-auto max-w-64 min-w-64 absolute md:static'>
             <div
-                className={`min-h-screen flex-col bg-gray-900 text-white p-4 shadow-[8px_0_10px_rgba(0,0,0,0.8)]`}
+                className={`${isSidebarOpen ? '' : 'hidden'} md:flex min-h-screen flex-col bg-gray-900 text-white p-4 shadow-[8px_0_10px_rgba(0,0,0,0.8)]`}
             >
-                <div className="flex items-center justify-center mb-8 border-b border-gray-700 pb-4">
+                <div className={`flex items-center justify-between md:justify-center mb-8 border-b border-gray-700 pb-4`}>
                     <Image
                         src="/images/logo_astro_branca.png"
                         alt="ASTRO"
@@ -195,6 +195,12 @@ const SideBar = ({ onAcoesExtensaoChange }) => {
                         height={50}
                         className="rounded"
                     />
+                    <button
+                        className={`md:hidden ${isSidebarOpen ? '' : 'hidden'} w-7 h-7 p-2 text-sm flex justify-center items-center rounded-full bg-red-600 hover:bg-red-500`}
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    >
+                        <i className="fas fa-close"></i>
+                    </button>
                 </div>
                 <div className="flex items-center mb-6 border-b border-gray-700 pb-4">
                     <img alt="User Avatar" className="w-10 h-10 rounded-full mr-3" height="40" src="https://storage.googleapis.com/a1aa/image/VkfyeN7xGTieHoe7l2wY3S7Vme4SEJ8ofByveRyBHqKqOJe5TA.jpg" width="40" />

@@ -3,7 +3,7 @@ import { Toast } from '../Toast';
 import TaskCard from '../TaskCard';
 import { useSearchParams } from 'next/navigation';
 
-const Activities = () => {
+const Activities = ({ isSidebarOpen }) => {
     const searchParams = useSearchParams();
     const [user, setUser] = useState(null);
     const [acaoId, setAcaoId] = useState(null);
@@ -175,8 +175,8 @@ const Activities = () => {
     };
 
     return (
-        <div className='w-full h-full bg-black'>
-            <div className="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className='w-full h-full bg-black overflow-y-auto'>
+            <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {atividades.filter((atividade) => atividade.status !== 'deletada').length > 0 ? (
                     atividades
                         .filter((atividade) => atividade.status !== 'deletada')
@@ -193,7 +193,7 @@ const Activities = () => {
             </div>
 
             <button
-                className={` ${user?.tipo === "coordenador" ? 'flex' : 'hidden'} absolute bottom-6 left-6 bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg items-center justify-center`}
+                className={` ${user?.tipo === "coordenador" && !isSidebarOpen ? 'flex' : 'hidden'} absolute bottom-6 left-6 bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg items-center justify-center`}
                 onClick={() => setIsCreating(true)}
             >
                 <i className="fas fa-plus mr-2"></i> Criar Atividade
@@ -202,11 +202,11 @@ const Activities = () => {
             {/* Popup de criação de atividade */}
             {
                 isCreating && (
-                    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-white p-8 rounded-lg w-96 max-h-[80vh] overflow-y-auto">
+                    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 p-4 sm:p-6">
+                        <div className="bg-white p-6 sm:p-8 rounded-lg w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh] sm:max-h-[80vh] overflow-y-auto">
                             <h2 className="text-xl text-black font-bold mb-4">Criar Nova Atividade</h2>
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-4">
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div>
                                     <label className="block text-gray-700">Nome</label>
                                     <input
                                         type="text"
@@ -217,7 +217,7 @@ const Activities = () => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Descrição</label>
                                     <textarea
                                         name="descricao"
@@ -227,7 +227,7 @@ const Activities = () => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Tempo de Duração (em minutos)</label>
                                     <input
                                         type="number"
@@ -238,7 +238,7 @@ const Activities = () => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Data de Início</label>
                                     <input
                                         type="datetime-local"
@@ -249,7 +249,7 @@ const Activities = () => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Data de Fim</label>
                                     <input
                                         type="datetime-local"
@@ -260,7 +260,7 @@ const Activities = () => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Local</label>
                                     <input
                                         type="text"
@@ -271,7 +271,7 @@ const Activities = () => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Status</label>
                                     <select
                                         name="status"
@@ -288,7 +288,7 @@ const Activities = () => {
                                         <option value="concluida">Concluída</option>
                                     </select>
                                 </div>
-                                <div className="mb-4">
+                                <div>
                                     <label className="block text-gray-700">Responsáveis</label>
 
                                     {/* Campo de busca */}
