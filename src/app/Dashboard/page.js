@@ -21,6 +21,7 @@ const Dashboard = () => {
     const [user, setUser] = useState(null);
     const [selected, setSelected] = useState("Atividades");
     const [acaoSelecionada, setAcaoSelecionada] = useState(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
         const storedAcao = localStorage.getItem("acaoSelecionada");
@@ -78,15 +79,21 @@ const Dashboard = () => {
 
     return (
         <SidebarProvider>
-            <div className='flex flex-grow max-h-screen'>
+            <div className='flex flex-grow min-h-screen'>
 
-                <SideBar onAcoesExtensaoChange={setAcaoSelecionada} />
-                <div className="flex-1 relative flex flex-col">
+                <SideBar onAcoesExtensaoChange={setAcaoSelecionada} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                <div className={`flex-1 ${isSidebarOpen ? '' : 'relative'} flex flex-col`}>
                     {acaoSelecionada ? (
                         <header className="bg-gray-800 p-4 flex flex-col space-y-2">
-                            <h1 className="text-2xl font-bold">
-                                {acaoSelecionada.nome}
-                            </h1>
+                            <div className='flex'>
+                                <button className={`md:hidden ${isSidebarOpen ? 'hidden' : ''} text-white`}
+                                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                                    <i className="fas fa-bars"></i>
+                                </button>
+                                <h1 className={`text-2xl font-bold ${isSidebarOpen ? '' : 'ml-4'}`}>
+                                    {acaoSelecionada.nome}
+                                </h1>
+                            </div>
                             <p className="text-sm">
                                 {acaoSelecionada.descricao}
                             </p>
@@ -104,14 +111,14 @@ const Dashboard = () => {
                         </header>
                     ) : (
                         <nav className="bg-gray-800 p-4 flex justify-between items-center">
-                            <button className="md:hidden text-white" id="menu-button">
+                            <button className="md:hidden text-white">
                                 <i className="fas fa-bars"></i>
                             </button>
                             <div className="text-xl font-bold">Dashboard</div>
                         </nav>
                     )}
                     <nav className="bg-gray-700 flex justify-between items-center">
-                        <div className="space-x-4">
+                        <div className="flex space-x-4">
                             {filteredButtons.map((button, index) => (
                                 <button
                                     key={index}
@@ -127,6 +134,7 @@ const Dashboard = () => {
                             ))}
                         </div>
                     </nav>
+
                     <div className="flex flex-grow overflow-y-auto">
                         {SelectedComponent}
                     </div>

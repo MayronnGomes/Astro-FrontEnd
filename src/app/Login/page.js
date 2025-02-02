@@ -91,7 +91,7 @@ const Login = () => {
 
     return (
         <div className="flex w-full h-screen bg-[url('/images/login.png')] bg-cover bg-center justify-center items-center">
-            <div className="bg-[#061E5A] text-white rounded-lg p-8 w-1/4">
+            <div className="bg-[#061E5A] text-white rounded-lg p-8 w-full sm:w-3/4 md:w-1/2 lg:w-1/4">
                 <h1 className="text-4xl font-bold mb-6">Seja bem-vindo(a)</h1>
                 <div className="flex mb-4">
                     <button
